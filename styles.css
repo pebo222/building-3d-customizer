@@ -131,6 +131,59 @@ body {
   gap: 14px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.language-select-wrapper {
+  position: relative;
+}
+
+.language-select-wrapper select {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-glass);
+  color: var(--color-text-main);
+  padding: 6px 24px 6px 10px;
+  border-radius: 8px;
+  font-family: var(--font-main);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: all 0.2s ease;
+}
+
+.language-select-wrapper select:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.language-select-wrapper select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 6px var(--color-primary-glow);
+}
+
+.language-select-wrapper::after {
+  content: '▼';
+  font-size: 0.5rem;
+  color: var(--color-text-muted);
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.language-select-wrapper select option {
+  background: #111115;
+  color: white;
+}
+
 /* Close Panel Button */
 .close-panel-btn {
   background: rgba(255, 255, 255, 0.05);
@@ -202,27 +255,6 @@ body {
   opacity: 1;
   pointer-events: auto;
   transform: scale(1);
-}
-
-.logo-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--color-primary) 0%, #a78bfa 100%);
-  border-radius: 10px;
-  position: relative;
-  box-shadow: 0 4px 12px var(--color-primary-glow);
-}
-
-.logo-icon::before {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 20px;
-  height: 20px;
-  border: 2px solid white;
-  border-radius: 4px;
-  transform: rotate(45deg);
 }
 
 .app-header h1 {

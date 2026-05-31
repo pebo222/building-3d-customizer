@@ -171,6 +171,16 @@ function init() {
   applyPreset(state.activePreset);
   updateLightingMode(state.timeOfDay);
 
+  // Set default language from select or browser preference
+  const selectLanguage = document.getElementById('select-language');
+  if (selectLanguage) {
+    const browserLang = navigator.language.slice(0, 2);
+    if (translations[browserLang]) {
+      selectLanguage.value = browserLang;
+    }
+    setLanguage(selectLanguage.value);
+  }
+
   animate();
 
   setTimeout(() => {
@@ -1110,6 +1120,14 @@ function setupEventListeners() {
     btnFloatingOpen.addEventListener('touchend', handleOpen);
   }
 
+  // 9. Language Switcher Listener
+  const selectLanguage = document.getElementById('select-language');
+  if (selectLanguage) {
+    selectLanguage.addEventListener('change', (e) => {
+      setLanguage(e.target.value);
+    });
+  }
+
   window.addEventListener('resize', onWindowResize);
 }
 
@@ -1185,6 +1203,201 @@ function animate() {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
+}
+
+// --- Internationalization (i18n) translation dictionaries ---
+const translations = {
+  en: {
+    subtitle: "Building Visualizer & Color Customizer",
+    tabPresets: "Presets",
+    tabColors: "Custom Colors",
+    tabEnvironment: "Environment",
+    presetsHeading: "Select a Remodeling Theme",
+    presetModernGreyTitle: "Modern Grey",
+    presetModernGreyDesc: "Clean light grey stucco with charcoal accents",
+    presetClassicTitle: "Classic Original",
+    presetClassicDesc: "Original peach facade with dark brown siding",
+    presetNordicTitle: "Nordic Contrast",
+    presetNordicDesc: "Off-white front with deep charcoal side wall",
+    presetTerracottaTitle: "Warm Terracotta",
+    presetTerracottaDesc: "Rust-orange details on warm sand facade",
+    presetEsteladaTitle: "Estelada",
+    presetEsteladaDesc: "Catalan Independence flag themed walls and colors",
+    colorsHeading: "Customize Material Colors",
+    btnRandomize: "🎲 Randomize All Colors",
+    labelLeftWall: "Left Side Wall",
+    labelFrontFacade: "Front Facade",
+    labelRightWall: "Right Side Wall",
+    labelBackWall: "Back Wall",
+    labelBalconies: "Balcony Slabs & Pillars",
+    labelDividers: "Balcony Divider",
+    labelAwnings: "Awnings (Canvas fabric)",
+    labelRailings: "Metal Railings",
+    labelFrames: "Window & Door Frames",
+    labelGlass: "Window Glass",
+    labelRoof: "Roof Slab",
+    labelRoofFixtures: "Rooftop Fixtures",
+    envHeading: "Environment & Lighting",
+    labelTimeOfDay: "Time of Day",
+    btnNoon: "Noon",
+    btnSunset: "Sunset",
+    btnNight: "Night",
+    labelCameraViews: "Camera Views",
+    btnViewIsometric: "Three-Quarter View",
+    btnViewFront: "Front Facade View",
+    btnViewSide: "Side Wall View",
+    labelLightingEffects: "Lighting Effects",
+    labelEnableShadows: "👥 Enable Shadows",
+    btnScreenshot: "Export Visualization PNG",
+    interactionHelp: "🖱️ Left Click + Drag to rotate | 🖱️ Right Click + Drag to pan | 📜 Scroll to zoom",
+    loadingTitle: "Generating 3D Model...",
+    loadingText: "Constructing architecture, lighting, and textures",
+    openCustomizer: "Open Customizer"
+  },
+  es: {
+    subtitle: "Visualizador de Edificios y Personalizador de Colores",
+    tabPresets: "Temas",
+    tabColors: "Colores",
+    tabEnvironment: "Entorno",
+    presetsHeading: "Seleccionar un Tema de Remodelación",
+    presetModernGreyTitle: "Gris Moderno",
+    presetModernGreyDesc: "Estuco gris claro limpio con detalles en carbón",
+    presetClassicTitle: "Clásico Original",
+    presetClassicDesc: "Fachada color melocotón original con laterales marrón oscuro",
+    presetNordicTitle: "Contraste Nórdico",
+    presetNordicDesc: "Frente blanco roto con pared lateral carbón profundo",
+    presetTerracottaTitle: "Terracota Cálida",
+    presetTerracottaDesc: "Detalles naranja óxido en fachada de arena cálida",
+    presetEsteladaTitle: "Estelada",
+    presetEsteladaDesc: "Paredes y colores temáticos de la bandera catalana",
+    colorsHeading: "Personalizar Colores de Materiales",
+    btnRandomize: "🎲 Colores Aleatorios",
+    labelLeftWall: "Pared Lateral Izquierda",
+    labelFrontFacade: "Fachada Frontal",
+    labelRightWall: "Pared Lateral Derecha",
+    labelBackWall: "Pared Trasera",
+    labelBalconies: "Losas y Pilares de Balcón",
+    labelDividers: "Separador de Balcón",
+    labelAwnings: "Toldos (Lona)",
+    labelRailings: "Barandillas Metálicas",
+    labelFrames: "Marcos de Ventanas y Puertas",
+    labelGlass: "Vidrio de Ventanas",
+    labelRoof: "Losa del Techo",
+    labelRoofFixtures: "Instalaciones del Techo",
+    envHeading: "Entorno e Iluminación",
+    labelTimeOfDay: "Hora del Día",
+    btnNoon: "Mediodía",
+    btnSunset: "Atardecer",
+    btnNight: "Noche",
+    labelCameraViews: "Vistas de Cámara",
+    btnViewIsometric: "Vista de Tres Cuartos",
+    btnViewFront: "Vista Frontal",
+    btnViewSide: "Vista Lateral",
+    labelLightingEffects: "Efectos de Iluminación",
+    labelEnableShadows: "👥 Activar Sombras",
+    btnScreenshot: "Exportar PNG de Visualización",
+    interactionHelp: "🖱️ Clic Izquierdo + Arrastrar para rotar | 🖱️ Clic Derecho + Arrastrar para desplazar | 📜 Deslizar para zoom",
+    loadingTitle: "Generando Modelo 3D...",
+    loadingText: "Construyendo arquitectura, iluminación y texturas",
+    openCustomizer: "Abrir Personalizador"
+  },
+  ca: {
+    subtitle: "Visualitzador d'Edificis i Personalitzador de Colors",
+    tabPresets: "Temes",
+    tabColors: "Colors",
+    tabEnvironment: "Entorn",
+    presetsHeading: "Seleccionar un Tema de Remodelació",
+    presetModernGreyTitle: "Gris Modern",
+    presetModernGreyDesc: "Estuc gris clar net amb detalls en carbó",
+    presetClassicTitle: "Clàssic Original",
+    presetClassicDesc: "Fatxada color préssec original amb laterals marró fosc",
+    presetNordicTitle: "Contrast Nòrdic",
+    presetNordicDesc: "Front blanc trencat amb paret lateral carbó profund",
+    presetTerracottaTitle: "Terracota Càlida",
+    presetTerracottaDesc: "Detalls taronja òxid en fatxada de sorra càlida",
+    presetEsteladaTitle: "Estelada",
+    presetEsteladaDesc: "Parets i colors temàtics de la bandera catalana",
+    colorsHeading: "Personalitzar Colors de Materials",
+    btnRandomize: "🎲 Colors Aleatoris",
+    labelLeftWall: "Paret Lateral Esquerra",
+    labelFrontFacade: "Fatxada Frontal",
+    labelRightWall: "Paret Lateral Dreta",
+    labelBackWall: "Paret Posterior",
+    labelBalconies: "Lloses i Pilars de Balcó",
+    labelDividers: "Separador de Balcó",
+    labelAwnings: "Tendals (Lona)",
+    labelRailings: "Baranes Metàl·liques",
+    labelFrames: "Marcs de Finestres i Portes",
+    labelGlass: "Vidre de Finestres",
+    labelRoof: "Llosa del Sostre",
+    labelRoofFixtures: "Instal·lacions del Sostre",
+    envHeading: "Entorn i Il·luminació",
+    labelTimeOfDay: "Hora del Dia",
+    btnNoon: "Migdia",
+    btnSunset: "Capvespre",
+    btnNight: "Nit",
+    labelCameraViews: "Vistes de Càmera",
+    btnViewIsometric: "Vista de Tres Quarts",
+    btnViewFront: "Vista Frontal",
+    btnViewSide: "Vista Lateral",
+    labelLightingEffects: "Efectes d'Il·luminació",
+    labelEnableShadows: "👥 Activar Ombres",
+    btnScreenshot: "Exportar PNG de Visualització",
+    interactionHelp: "🖱️ Clic Esquerre + Arrossegar per rotar | 🖱️ Clic Dret + Arrossegar per desplaçar | 📜 Lliscament per zoom",
+    loadingTitle: "Generant Model 3D...",
+    loadingText: "Construint arquitectura, il·luminació i textures",
+    openCustomizer: "Obrir Personalitzador"
+  }
+};
+
+function setLanguage(lang) {
+  const dict = translations[lang];
+  if (!dict) return;
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (dict[key]) {
+      if (el.tagName === 'INPUT' && el.type === 'button') {
+        el.value = dict[key];
+      } else {
+        const icon = el.querySelector('.icon') || el.querySelector('svg');
+        if (icon) {
+          for (let node of el.childNodes) {
+            if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
+              node.nodeValue = ' ' + dict[key];
+              break;
+            }
+          }
+        } else {
+          const innerSvg = el.querySelector('svg');
+          if (innerSvg) {
+            for (let node of [...el.childNodes]) {
+              if (node.nodeType === Node.TEXT_NODE) {
+                node.remove();
+              }
+            }
+            el.appendChild(document.createTextNode(' ' + dict[key]));
+          } else {
+            const valLabel = el.querySelector('.color-value-label');
+            if (valLabel) {
+              const spanLabel = el.querySelector('span:first-child');
+              if (spanLabel) {
+                spanLabel.textContent = dict[key];
+              }
+            } else {
+              el.textContent = dict[key];
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // Keep floating button aria-label updated
+  const btnFloatingOpen = document.getElementById('btn-floating-open');
+  if (btnFloatingOpen && dict.openCustomizer) {
+    btnFloatingOpen.setAttribute('aria-label', dict.openCustomizer);
+  }
 }
 
 window.onload = init;

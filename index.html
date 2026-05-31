@@ -25,89 +25,97 @@
   <!-- Loading Overlay -->
   <div id="loading-overlay">
     <div class="loader"></div>
-    <h1>Generating 3D Model...</h1>
-    <p>Constructing architecture, lighting, and textures</p>
+    <h1 data-i18n="loadingTitle">Generating 3D Model...</h1>
+    <p data-i18n="loadingText">Constructing architecture, lighting, and textures</p>
   </div>
 
   <!-- Interactive Control Panel -->
   <div class="ui-container">
     <header class="app-header">
       <div class="header-title-group">
-        <div class="logo-icon"></div>
         <div>
           <h1>Remodel3D</h1>
-          <p>Building Visualizer & Color Customizer</p>
+          <p data-i18n="subtitle">Building Visualizer & Color Customizer</p>
         </div>
       </div>
-      <button id="btn-close-panel" class="close-panel-btn" aria-label="Close Panel">
-        <svg viewBox="0 0 24 24" width="20" height="20">
-          <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </svg>
-      </button>
+      <div class="header-actions">
+        <div class="language-select-wrapper">
+          <select id="select-language" aria-label="Change Language">
+            <option value="en">EN</option>
+            <option value="es">ES</option>
+            <option value="ca">CA</option>
+          </select>
+        </div>
+        <button id="btn-close-panel" class="close-panel-btn" aria-label="Close Panel">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
     </header>
 
     <!-- Navigation / Tabs -->
     <div class="tabs">
-      <button class="tab-btn active" data-tab="presets">Presets</button>
-      <button class="tab-btn" data-tab="colors">Custom Colors</button>
-      <button class="tab-btn" data-tab="environment">Environment</button>
+      <button class="tab-btn active" data-tab="presets" data-i18n="tabPresets">Presets</button>
+      <button class="tab-btn" data-tab="colors" data-i18n="tabColors">Custom Colors</button>
+      <button class="tab-btn" data-tab="environment" data-i18n="tabEnvironment">Environment</button>
     </div>
 
     <!-- Tab Contents -->
     <div class="tab-content active" id="tab-presets">
-      <h2>Select a Remodeling Theme</h2>
+      <h2 data-i18n="presetsHeading">Select a Remodeling Theme</h2>
       <div class="presets-grid">
         <button class="preset-card active" data-preset="modern-grey">
           <div class="preset-preview" style="background: linear-gradient(135deg, #e5e5e5 50%, #4a4a4a 50%);"></div>
           <div class="preset-info">
-            <h3>Modern Grey</h3>
-            <p>Clean light grey stucco with charcoal accents</p>
+            <h3 data-i18n="presetModernGreyTitle">Modern Grey</h3>
+            <p data-i18n="presetModernGreyDesc">Clean light grey stucco with charcoal accents</p>
           </div>
         </button>
-
+ 
         <button class="preset-card" data-preset="classic-peach">
           <div class="preset-preview" style="background: linear-gradient(135deg, #d39c82 50%, #3e332e 50%);"></div>
           <div class="preset-info">
-            <h3>Classic Original</h3>
-            <p>Original peach facade with dark brown siding</p>
+            <h3 data-i18n="presetClassicTitle">Classic Original</h3>
+            <p data-i18n="presetClassicDesc">Original peach facade with dark brown siding</p>
           </div>
         </button>
-
+ 
         <button class="preset-card" data-preset="nordic-wood">
           <div class="preset-preview" style="background: linear-gradient(135deg, #f2efe9 50%, #1e2022 50%);"></div>
           <div class="preset-info">
-            <h3>Nordic Contrast</h3>
-            <p>Off-white front with deep charcoal side wall</p>
+            <h3 data-i18n="presetNordicTitle">Nordic Contrast</h3>
+            <p data-i18n="presetNordicDesc">Off-white front with deep charcoal side wall</p>
           </div>
         </button>
-
+ 
         <button class="preset-card" data-preset="terracotta">
           <div class="preset-preview" style="background: linear-gradient(135deg, #b85a3a 50%, #ded7c9 50%);"></div>
           <div class="preset-info">
-            <h3>Warm Terracotta</h3>
-            <p>Rust-orange details on warm sand facade</p>
+            <h3 data-i18n="presetTerracottaTitle">Warm Terracotta</h3>
+            <p data-i18n="presetTerracottaDesc">Rust-orange details on warm sand facade</p>
           </div>
         </button>
-
+ 
         <button class="preset-card" data-preset="estelada">
           <div class="preset-preview" style="background: linear-gradient(135deg, #fcd116 33%, #da121a 33%, #da121a 66%, #0055a5 66%);"></div>
           <div class="preset-info">
-            <h3>Estelada</h3>
-            <p>Catalan Independence flag themed walls and colors</p>
+            <h3 data-i18n="presetEsteladaTitle">Estelada</h3>
+            <p data-i18n="presetEsteladaDesc">Catalan Independence flag themed walls and colors</p>
           </div>
         </button>
       </div>
     </div>
 
     <div class="tab-content" id="tab-colors">
-      <h2>Customize Material Colors</h2>
+      <h2 data-i18n="colorsHeading">Customize Material Colors</h2>
 
-      <button id="btn-randomize" class="view-btn" style="margin-bottom: 16px; background: rgba(92, 98, 236, 0.15); border-color: var(--color-primary); color: white; font-weight: 600; cursor: pointer;">
+      <button id="btn-randomize" class="view-btn" data-i18n="btnRandomize" style="margin-bottom: 16px; background: rgba(92, 98, 236, 0.15); border-color: var(--color-primary); color: white; font-weight: 600; cursor: pointer;">
         🎲 Randomize All Colors
       </button>
       
       <div class="color-picker-group">
-        <label for="color-left-wall">
+        <label for="color-left-wall" data-i18n="labelLeftWall">
           <span>Left Side Wall</span>
           <span class="color-value-label" id="val-left-wall">#e5e5e5</span>
         </label>
@@ -117,7 +125,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-front-facade">
+        <label for="color-front-facade" data-i18n="labelFrontFacade">
           <span>Front Facade</span>
           <span class="color-value-label" id="val-front-facade">#e0e0e0</span>
         </label>
@@ -127,7 +135,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-right-wall">
+        <label for="color-right-wall" data-i18n="labelRightWall">
           <span>Right Side Wall</span>
           <span class="color-value-label" id="val-right-wall">#e5e5e5</span>
         </label>
@@ -137,7 +145,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-back-wall">
+        <label for="color-back-wall" data-i18n="labelBackWall">
           <span>Back Wall</span>
           <span class="color-value-label" id="val-back-wall">#e5e5e5</span>
         </label>
@@ -147,7 +155,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-balconies">
+        <label for="color-balconies" data-i18n="labelBalconies">
           <span>Balcony Slabs & Pillars</span>
           <span class="color-value-label" id="val-balconies">#d0d0d0</span>
         </label>
@@ -157,7 +165,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-dividers">
+        <label for="color-dividers" data-i18n="labelDividers">
           <span>Balcony Divider</span>
           <span class="color-value-label" id="val-dividers">#d0d0d0</span>
         </label>
@@ -167,7 +175,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-awnings">
+        <label for="color-awnings" data-i18n="labelAwnings">
           <span>Awnings (Canvas fabric)</span>
           <span class="color-value-label" id="val-awnings">#616161</span>
         </label>
@@ -177,7 +185,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-railings">
+        <label for="color-railings" data-i18n="labelRailings">
           <span>Metal Railings</span>
           <span class="color-value-label" id="val-railings">#3a3a3a</span>
         </label>
@@ -187,7 +195,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-frames">
+        <label for="color-frames" data-i18n="labelFrames">
           <span>Window & Door Frames</span>
           <span class="color-value-label" id="val-frames">#2a2a2a</span>
         </label>
@@ -197,7 +205,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-glass">
+        <label for="color-glass" data-i18n="labelGlass">
           <span>Window Glass</span>
           <span class="color-value-label" id="val-glass">#8ab4f8</span>
         </label>
@@ -207,7 +215,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-roof">
+        <label for="color-roof" data-i18n="labelRoof">
           <span>Roof Slab</span>
           <span class="color-value-label" id="val-roof">#d0d0d0</span>
         </label>
@@ -217,7 +225,7 @@
       </div>
 
       <div class="color-picker-group">
-        <label for="color-roof-fixtures">
+        <label for="color-roof-fixtures" data-i18n="labelRoofFixtures">
           <span>Rooftop Fixtures</span>
           <span class="color-value-label" id="val-roof-fixtures">#ffffff</span>
         </label>
@@ -228,35 +236,35 @@
     </div>
 
     <div class="tab-content" id="tab-environment">
-      <h2>Environment & Lighting</h2>
+      <h2 data-i18n="envHeading">Environment & Lighting</h2>
       
       <div class="control-section">
-        <h3>Time of Day</h3>
+        <h3 data-i18n="labelTimeOfDay">Time of Day</h3>
         <div class="time-presets">
-          <button class="time-btn active" data-time="noon">
+          <button class="time-btn active" data-time="noon" data-i18n="btnNoon">
             <span class="icon">☀️</span> Noon
           </button>
-          <button class="time-btn" data-time="sunset">
+          <button class="time-btn" data-time="sunset" data-i18n="btnSunset">
             <span class="icon">🌅</span> Sunset
           </button>
-          <button class="time-btn" data-time="night">
+          <button class="time-btn" data-time="night" data-i18n="btnNight">
             <span class="icon">🌙</span> Night
           </button>
         </div>
       </div>
 
       <div class="control-section">
-        <h3>Camera Views</h3>
+        <h3 data-i18n="labelCameraViews">Camera Views</h3>
         <div class="view-presets">
-          <button class="view-btn" id="btn-view-isometric">Three-Quarter View</button>
-          <button class="view-btn" id="btn-view-front">Front Facade View</button>
-          <button class="view-btn" id="btn-view-side">Side Wall View</button>
+          <button class="view-btn" id="btn-view-isometric" data-i18n="btnViewIsometric">Three-Quarter View</button>
+          <button class="view-btn" id="btn-view-front" data-i18n="btnViewFront">Front Facade View</button>
+          <button class="view-btn" id="btn-view-side" data-i18n="btnViewSide">Side Wall View</button>
         </div>
       </div>
       <div class="control-section" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-glass);">
-        <h3>Lighting Effects</h3>
+        <h3 data-i18n="labelLightingEffects">Lighting Effects</h3>
         <label class="toggle-switch" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; background: rgba(0, 0, 0, 0.15); padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.02); transition: all 0.2s ease;">
-          <span style="font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 8px;" data-i18n="labelEnableShadows">
             👥 Enable Shadows
           </span>
           <input type="checkbox" id="toggle-shadows" checked style="cursor: pointer; width: 20px; height: 20px;">
@@ -265,7 +273,7 @@
     </div>
 
     <footer class="app-footer">
-      <button id="btn-screenshot" class="action-btn">
+      <button id="btn-screenshot" class="action-btn" data-i18n="btnScreenshot">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
           <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2z"/>
           <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
@@ -284,7 +292,7 @@
 
   <!-- Instruction Label -->
   <div class="interaction-help">
-    <p>🖱️ Left Click + Drag to rotate | 🖱️ Right Click + Drag to pan | 📜 Scroll to zoom</p>
+    <p data-i18n="interactionHelp">🖱️ Left Click + Drag to rotate | 🖱️ Right Click + Drag to pan | 📜 Scroll to zoom</p>
   </div>
 
   <script type="module" src="app.js"></script>
