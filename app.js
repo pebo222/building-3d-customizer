@@ -1082,6 +1082,15 @@ function setupEventListeners() {
     });
   }
 
+  // 8. Toggle Control Panel (Collapse/Expand)
+  const btnTogglePanel = document.getElementById('btn-toggle-panel');
+  const uiContainer = document.querySelector('.ui-container');
+  if (btnTogglePanel && uiContainer) {
+    btnTogglePanel.addEventListener('click', () => {
+      uiContainer.classList.toggle('collapsed');
+    });
+  }
+
   window.addEventListener('resize', onWindowResize);
 }
 

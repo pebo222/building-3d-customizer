@@ -102,6 +102,7 @@ body {
   flex-direction: column;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
   animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes slideIn {
@@ -117,11 +118,64 @@ body {
 
 /* Header */
 .app-header {
-  padding: 24px 24px 16px 24px;
+  padding: 20px 20px 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.header-title-group {
   display: flex;
   align-items: center;
   gap: 14px;
-  border-bottom: 1px solid var(--border-glass);
+}
+
+/* Toggle Panel Button */
+.toggle-panel-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-glass);
+  color: var(--color-text-main);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toggle-panel-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+}
+
+.toggle-panel-btn svg {
+  transition: transform 0.3s ease;
+  transform: rotate(0deg);
+}
+
+/* Collapsed States */
+.ui-container.collapsed {
+  transform: translateX(-316px);
+}
+
+.ui-container.collapsed .toggle-panel-btn svg {
+  transform: rotate(180deg);
+}
+
+.ui-container.collapsed .tabs,
+.ui-container.collapsed .tab-content,
+.ui-container.collapsed .app-footer {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.ui-container.collapsed .app-header {
+  border-bottom-color: transparent;
 }
 
 .logo-icon {
@@ -482,9 +536,21 @@ body {
     top: auto;
     bottom: 16px;
     left: 16px;
-    max-height: 50vh;
+    max-height: 55vh;
   }
   
+  .ui-container.collapsed {
+    transform: translateY(calc(100% - 74px)); /* Leave header visible at the bottom */
+  }
+  
+  .ui-container.collapsed .toggle-panel-btn svg {
+    transform: rotate(90deg);
+  }
+  
+  .toggle-panel-btn svg {
+    transform: rotate(-90deg);
+  }
+
   .interaction-help {
     display: none;
   }
