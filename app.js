@@ -1008,6 +1008,7 @@ function setupEventListeners() {
       }
       
       presetCards.forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.saved-style-card').forEach(c => c.classList.remove('active'));
       state.activePreset = 'custom';
     });
   });
@@ -1025,6 +1026,7 @@ function setupEventListeners() {
     });
 
     presetCards.forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.saved-style-card').forEach(c => c.classList.remove('active'));
     state.activePreset = 'custom';
   });
 
@@ -1036,6 +1038,10 @@ function setupEventListeners() {
       
       const timeVal = btn.dataset.time;
       updateLightingMode(timeVal);
+      
+      presetCards.forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.saved-style-card').forEach(c => c.classList.remove('active'));
+      state.activePreset = 'custom';
     });
   });
 
@@ -1078,6 +1084,10 @@ function setupEventListeners() {
           }
         }
       });
+
+      presetCards.forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.saved-style-card').forEach(c => c.classList.remove('active'));
+      state.activePreset = 'custom';
     });
   }
 
@@ -1126,6 +1136,26 @@ function setupEventListeners() {
     selectLanguage.addEventListener('change', (e) => {
       setLanguage(e.target.value);
     });
+  }
+
+  // 10. Save Style Event Listener
+  const btnSaveStyle = document.getElementById('btn-save-style');
+  if (btnSaveStyle) {
+    const inputName = document.getElementById('input-style-name');
+    btnSaveStyle.addEventListener('click', () => {
+      const name = inputName.value.trim();
+      saveStyle(name);
+      inputName.value = '';
+    });
+    if (inputName) {
+      inputName.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const name = inputName.value.trim();
+          saveStyle(name);
+          inputName.value = '';
+        }
+      });
+    }
   }
 
   window.addEventListener('resize', onWindowResize);
@@ -1252,7 +1282,11 @@ const translations = {
     interactionHelp: "🖱️ Left Click + Drag to rotate | 🖱️ Right Click + Drag to pan | 📜 Scroll to zoom",
     loadingTitle: "Generating 3D Model...",
     loadingText: "Constructing architecture, lighting, and textures",
-    openCustomizer: "Open Customizer"
+    openCustomizer: "Open Customizer",
+    savedStylesHeading: "My Favorite Styles",
+    btnSaveStyle: "Save Style",
+    saveStylePlaceholder: "Name your style...",
+    noSavedStyles: "No saved styles yet."
   },
   es: {
     subtitle: "Visualizador de Edificios y Personalizador de Colores",
@@ -1299,7 +1333,11 @@ const translations = {
     interactionHelp: "🖱️ Clic Izquierdo + Arrastrar para rotar | 🖱️ Clic Derecho + Arrastrar para desplazar | 📜 Deslizar para zoom",
     loadingTitle: "Generando Modelo 3D...",
     loadingText: "Construyendo arquitectura, iluminación y texturas",
-    openCustomizer: "Abrir Personalizador"
+    openCustomizer: "Abrir Personalizador",
+    savedStylesHeading: "Mis Estilos Favoritos",
+    btnSaveStyle: "Guardar Estilo",
+    saveStylePlaceholder: "Nombre del estilo...",
+    noSavedStyles: "Aún no hay estilos guardados."
   },
   ca: {
     subtitle: "Visualitzador d'Edificis i Personalitzador de Colors",
@@ -1346,7 +1384,11 @@ const translations = {
     interactionHelp: "🖱️ Clic Esquerre + Arrossegar per rotar | 🖱️ Clic Dret + Arrossegar per desplaçar | 📜 Lliscament per zoom",
     loadingTitle: "Generant Model 3D...",
     loadingText: "Construint arquitectura, il·luminació i textures",
-    openCustomizer: "Obrir Personalitzador"
+    openCustomizer: "Obrir Personalitzador",
+    savedStylesHeading: "Els Meus Estils Preferits",
+    btnSaveStyle: "Desar Estil",
+    saveStylePlaceholder: "Nom de l'estil...",
+    noSavedStyles: "Encara no hi ha estils desats."
   }
 };
 
@@ -1398,6 +1440,176 @@ function setLanguage(lang) {
   if (btnFloatingOpen && dict.openCustomizer) {
     btnFloatingOpen.setAttribute('aria-label', dict.openCustomizer);
   }
+
+  // Update input placeholder translation if key exists
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (dict[key]) {
+      el.placeholder = dict[key];
+    }
+  });
+
+  // Re-render saved styles list to update locale text (e.g. empty message)
+  renderSavedStyles();
+}
+
+// --- Saved Styles Management ---
+
+function getSavedStyles() {
+  const str = localStorage.getItem('remodel3d_saved_styles');
+  try {
+    return str ? JSON.parse(str) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveStyle(name) {
+  const styles = getSavedStyles();
+  const newStyle = {
+    id: 'style_' + Date.now(),
+    name: name || 'Custom Style',
+    colors: { ...state.colors },
+    timeOfDay: state.timeOfDay,
+    enableShadows: renderer.shadowMap.enabled
+  };
+  styles.push(newStyle);
+  localStorage.setItem('remodel3d_saved_styles', JSON.stringify(styles));
+  renderSavedStyles();
+}
+
+function deleteStyle(id) {
+  let styles = getSavedStyles();
+  styles = styles.filter(s => s.id !== id);
+  localStorage.setItem('remodel3d_saved_styles', JSON.stringify(styles));
+  if (state.activePreset === id) {
+    state.activePreset = 'custom';
+  }
+  renderSavedStyles();
+}
+
+function applyStyle(styleObj) {
+  // Apply colors
+  Object.keys(styleObj.colors).forEach(key => {
+    const val = styleObj.colors[key];
+    state.colors[key] = val;
+    
+    if (colorInputs[key]) colorInputs[key].value = val;
+    if (colorLabels[key]) colorLabels[key].textContent = val.toUpperCase();
+    
+    if (materials[key]) {
+      materials[key].color.set(val);
+    }
+  });
+
+  // Apply time of day if present
+  if (styleObj.timeOfDay) {
+    state.timeOfDay = styleObj.timeOfDay;
+    const timeButtons = document.querySelectorAll('.time-btn');
+    timeButtons.forEach(btn => {
+      if (btn.dataset.time === styleObj.timeOfDay) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    updateLightingMode(styleObj.timeOfDay);
+  }
+
+  // Apply shadows toggle if present
+  if (styleObj.enableShadows !== undefined) {
+    const toggleShadows = document.getElementById('toggle-shadows');
+    if (toggleShadows) {
+      toggleShadows.checked = styleObj.enableShadows;
+      renderer.shadowMap.enabled = styleObj.enableShadows;
+      scene.traverse((node) => {
+        if (node.isMesh) {
+          node.castShadow = styleObj.enableShadows;
+          node.receiveShadow = styleObj.enableShadows;
+          if (node.material) {
+            if (Array.isArray(node.material)) {
+              node.material.forEach(m => m.needsUpdate = true);
+            } else {
+              node.material.needsUpdate = true;
+            }
+          }
+        }
+      });
+    }
+  }
+
+  // Remove active state from preset cards because this is a custom style
+  const presetCards = document.querySelectorAll('.preset-card');
+  presetCards.forEach(c => c.classList.remove('active'));
+}
+
+function renderSavedStyles() {
+  const container = document.getElementById('saved-styles-container');
+  if (!container) return;
+
+  const savedStyles = getSavedStyles();
+  
+  if (savedStyles.length === 0) {
+    const lang = document.getElementById('select-language')?.value || 'en';
+    const dict = translations[lang] || translations.en;
+    container.innerHTML = `<div class="empty-saved-styles">${dict.noSavedStyles || 'No saved styles yet.'}</div>`;
+    return;
+  }
+
+  container.innerHTML = '';
+  savedStyles.forEach(style => {
+    const card = document.createElement('div');
+    card.className = 'saved-style-card';
+    if (state.activePreset === style.id) {
+      card.classList.add('active');
+    }
+
+    // Create dots for Side Wall, Front Facade, Balconies, Glass
+    const dot1 = style.colors.leftWall || '#ffffff';
+    const dot2 = style.colors.frontFacade || '#ffffff';
+    const dot3 = style.colors.balconies || '#ffffff';
+    const dot4 = style.colors.glass || '#ffffff';
+
+    const timeLabel = style.timeOfDay ? style.timeOfDay.toUpperCase() : '';
+
+    card.innerHTML = `
+      <div class="saved-style-info">
+        <div class="saved-style-palette">
+          <div class="palette-dot" style="background-color: ${dot1};"></div>
+          <div class="palette-dot" style="background-color: ${dot2};"></div>
+          <div class="palette-dot" style="background-color: ${dot3};"></div>
+          <div class="palette-dot" style="background-color: ${dot4};"></div>
+        </div>
+        <span class="saved-style-name">${escapeHtml(style.name)}</span>
+      </div>
+      <span class="saved-style-meta">${timeLabel}</span>
+      <button class="btn-delete-style" aria-label="Delete style" data-id="${style.id}">&times;</button>
+    `;
+
+    // Click handler to load style
+    card.addEventListener('click', (e) => {
+      if (e.target.classList.contains('btn-delete-style')) return;
+      applyStyle(style);
+      state.activePreset = style.id;
+      
+      document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.saved-style-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+    });
+
+    // Delete handler
+    const btnDelete = card.querySelector('.btn-delete-style');
+    btnDelete.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteStyle(style.id);
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
 window.onload = init;
