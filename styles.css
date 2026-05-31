@@ -611,6 +611,10 @@ body {
   font-size: 0.85rem;
   outline: none;
   transition: all 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 .save-style-form input:focus {
@@ -630,6 +634,10 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px var(--color-primary-glow);
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 .save-style-form button:hover {
@@ -711,6 +719,10 @@ body {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-delete-style:hover {
@@ -729,6 +741,10 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .save-style-form input {
+    font-size: 16px; /* Prevents auto-zoom on iOS focus */
+  }
+
   .ui-container {
     width: calc(100% - 32px);
     top: auto;
