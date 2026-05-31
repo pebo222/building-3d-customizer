@@ -1142,17 +1142,23 @@ function setupEventListeners() {
   const btnSaveStyle = document.getElementById('btn-save-style');
   if (btnSaveStyle) {
     const inputName = document.getElementById('input-style-name');
-    btnSaveStyle.addEventListener('click', () => {
+    const handleSave = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const name = inputName.value.trim();
       saveStyle(name);
       inputName.value = '';
-    });
+      if (inputName) inputName.blur(); // Dismiss mobile keyboard instantly
+    };
+    btnSaveStyle.addEventListener('click', handleSave);
+    btnSaveStyle.addEventListener('touchstart', handleSave);
     if (inputName) {
       inputName.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           const name = inputName.value.trim();
           saveStyle(name);
           inputName.value = '';
+          inputName.blur(); // Dismiss mobile keyboard instantly
         }
       });
     }
@@ -1586,23 +1592,32 @@ function renderSavedStyles() {
       <button class="btn-delete-style" aria-label="Delete style" data-id="${style.id}">&times;</button>
     `;
 
-    // Click handler to load style
-    card.addEventListener('click', (e) => {
+    // Click handler to load style (with touchstart support to handle touch events instantly)
+    const handleCardTap = (e) => {
       if (e.target.classList.contains('btn-delete-style')) return;
+      e.preventDefault();
+      e.stopPropagation();
       applyStyle(style);
       state.activePreset = style.id;
       
       document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
       document.querySelectorAll('.saved-style-card').forEach(c => c.classList.remove('active'));
       card.classList.add('active');
-    });
+    };
+    card.addEventListener('click', handleCardTap);
+    card.addEventListener('touchstart', handleCardTap);
 
     // Delete handler
     const btnDelete = card.querySelector('.btn-delete-style');
-    btnDelete.addEventListener('click', (e) => {
-      e.stopPropagation();
-      deleteStyle(style.id);
-    });
+    if (btnDelete) {
+      const handleDelete = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        deleteStyle(style.id);
+      };
+      btnDelete.addEventListener('click', handleDelete);
+      btnDelete.addEventListener('touchstart', handleDelete);
+    }
 
     container.appendChild(card);
   });
