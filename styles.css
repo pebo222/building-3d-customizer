@@ -131,8 +131,8 @@ body {
   gap: 14px;
 }
 
-/* Toggle Panel Button */
-.toggle-panel-btn {
+/* Close Panel Button */
+.close-panel-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-glass);
   color: var(--color-text-main);
@@ -147,35 +147,61 @@ body {
   flex-shrink: 0;
 }
 
-.toggle-panel-btn:hover {
+.close-panel-btn:hover {
   background: rgba(255, 255, 255, 0.12);
   color: white;
+  transform: scale(1.05);
 }
 
-.toggle-panel-btn svg {
-  transition: transform 0.3s ease;
-  transform: rotate(0deg);
+.close-panel-btn:active {
+  transform: scale(0.95);
 }
 
-/* Collapsed States */
-.ui-container.collapsed {
-  transform: translateX(-316px);
-}
-
-.ui-container.collapsed .toggle-panel-btn svg {
-  transform: rotate(180deg);
-}
-
-.ui-container.collapsed .tabs,
-.ui-container.collapsed .tab-content,
-.ui-container.collapsed .app-footer {
+/* Hidden States (Slides panel out completely) */
+.ui-container.hidden {
+  transform: translateX(-420px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease;
 }
 
-.ui-container.collapsed .app-header {
-  border-bottom-color: transparent;
+/* Floating Open Button */
+.floating-open-btn {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  width: 56px;
+  height: 56px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.6);
+}
+
+.floating-open-btn:hover {
+  background: var(--bg-glass-active);
+  transform: scale(1.05);
+}
+
+.floating-open-btn:active {
+  transform: scale(0.95);
+}
+
+.floating-open-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
 }
 
 .logo-icon {
@@ -539,16 +565,10 @@ body {
     max-height: 55vh;
   }
   
-  .ui-container.collapsed {
-    transform: translateY(calc(100% - 74px)); /* Leave header visible at the bottom */
-  }
-  
-  .ui-container.collapsed .toggle-panel-btn svg {
-    transform: rotate(90deg);
-  }
-  
-  .toggle-panel-btn svg {
-    transform: rotate(-90deg);
+  .ui-container.hidden {
+    transform: translateY(100vh);
+    opacity: 0;
+    pointer-events: none;
   }
 
   .interaction-help {

@@ -39,9 +39,9 @@
           <p>Building Visualizer & Color Customizer</p>
         </div>
       </div>
-      <button id="btn-toggle-panel" class="toggle-panel-btn" aria-label="Toggle Panel">
-        <svg class="toggle-icon" viewBox="0 0 24 24" width="20" height="20">
-          <path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+      <button id="btn-close-panel" class="close-panel-btn" aria-label="Close Panel">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
         </svg>
       </button>
     </header>
@@ -274,6 +274,13 @@
       </button>
     </footer>
   </div>
+
+  <!-- Floating Open Button (visible when UI panel is closed) -->
+  <button id="btn-floating-open" class="floating-open-btn" aria-label="Open Customizer">
+    <svg viewBox="0 0 24 24" width="26" height="26">
+      <path fill="currentColor" d="M12 3a9 9 0 0 0-9 9c0 1.66 1.34 3 3 3h.77c.45 0 .81.36.81.8 0 .22-.09.43-.24.58l-1.24 1.25A1.49 1.49 0 0 0 6.41 21H12a9 9 0 0 0 9-9 9 9 0 0 0-9-9zm-4.5 9c-.83 0-1.5-.67-1.5-1.5S6.67 9 7.5 9s1.5.67 1.5 1.5S8.33 12 7.5 12zm3-3C9.67 9 9 8.33 9 7.5S9.67 6 10.5 6s1.5.67 1.5 1.5S11.33 9 10.5 9zm4 0c-.83 0-1.5-.67-1.5-1.5S13.67 6 14.5 6s1.5.67 1.5 1.5S15.33 9 14.5 9zm3 3c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5S18.33 12 17.5 12z"/>
+    </svg>
+  </button>
 
   <!-- Instruction Label -->
   <div class="interaction-help">

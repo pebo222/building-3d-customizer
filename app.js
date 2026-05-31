@@ -1082,13 +1082,43 @@ function setupEventListeners() {
     });
   }
 
-  // 8. Toggle Control Panel (Collapse/Expand)
-  const btnTogglePanel = document.getElementById('btn-toggle-panel');
+  // 8. Toggle Control Panel (Close/Open) with Touch Support & Event Isolation
+  const btnClosePanel = document.getElementById('btn-close-panel');
+  const btnFloatingOpen = document.getElementById('btn-floating-open');
   const uiContainer = document.querySelector('.ui-container');
-  if (btnTogglePanel && uiContainer) {
-    btnTogglePanel.addEventListener('click', () => {
-      uiContainer.classList.toggle('collapsed');
+  
+  if (btnClosePanel && btnFloatingOpen && uiContainer) {
+    // Isolate UI panel and floating button from Three.js OrbitControls interactions
+    const stopEvents = ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'pointerdown', 'pointerup'];
+    stopEvents.forEach(evtType => {
+      uiContainer.addEventListener(evtType, (e) => {
+        e.stopPropagation();
+      });
+      btnFloatingOpen.addEventListener(evtType, (e) => {
+        e.stopPropagation();
+      });
     });
+
+    const handleClose = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uiContainer.classList.add('hidden');
+      btnFloatingOpen.classList.add('visible');
+    };
+    
+    const handleOpen = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      uiContainer.classList.remove('hidden');
+      btnFloatingOpen.classList.remove('visible');
+    };
+
+    // Listen to both click and touchend for instant mobile response
+    btnClosePanel.addEventListener('click', handleClose);
+    btnClosePanel.addEventListener('touchend', handleClose);
+    
+    btnFloatingOpen.addEventListener('click', handleOpen);
+    btnFloatingOpen.addEventListener('touchend', handleOpen);
   }
 
   window.addEventListener('resize', onWindowResize);
