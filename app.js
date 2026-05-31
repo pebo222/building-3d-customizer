@@ -444,17 +444,6 @@ function buildScene() {
   grass.receiveShadow = true;
   scene.add(grass);
 
-  // Smooth Grassy Slope (Left side hill - replaces the stepped "stairs")
-  const slopeW = 40;
-  const slopeD = 100;
-  const hillSlopeGeo = new THREE.BoxGeometry(slopeW, 0.4, slopeD);
-  const hillSlope = new THREE.Mesh(hillSlopeGeo, materials.ground);
-  hillSlope.receiveShadow = true;
-  hillSlope.castShadow = true;
-  hillSlope.rotation.z = -15 * Math.PI / 180; // 15 degrees slope
-  hillSlope.position.set(-bW / 2 - 20, 5.0, 0); // Shifted left and raised to meet base smoothly
-  scene.add(hillSlope);
-
   // Walkway / Pavement (Front)
   const walkGeo = new THREE.BoxGeometry(bW, 0.05, 8);
   const walkway = new THREE.Mesh(walkGeo, materials.walkway);
