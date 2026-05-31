@@ -43,7 +43,7 @@ const presets = {
     backWall: '#e5e5e5',
     balconies: '#d0d0d0',
     dividers: '#d0d0d0',
-    awnings: '#616161',
+    awnings: '#1b6e4e',
     railings: '#3a3a3a',
     frames: '#2a2a2a',
     roof: '#d0d0d0',
