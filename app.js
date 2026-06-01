@@ -6,6 +6,7 @@ const state = {
   activePreset: 'modern-grey',
   timeOfDay: 'noon',
   rightAwningsEnabled: true,
+  bunnyEnabled: false,
   colors: {
     leftWall: '#d39c82',
     leftWallDiagonal: '#d39c82',
@@ -987,6 +988,7 @@ function buildScene() {
     if (f === 0) {
       bunnyMesh = createBunny();
       bunnyMesh.position.set(2.1, yPos + 0.75, 6.2);
+      bunnyMesh.visible = state.bunnyEnabled;
       bunnyCurrentX = 2.1;
       bunnyCurrentZ = 6.2;
       bunnyTargetX = 2.1;
@@ -1263,7 +1265,7 @@ function setupEventListeners() {
   if (controls) {
     controls.addEventListener('change', () => {
       bunnyLastCameraMoveTime = performance.now();
-      if (bunnyMesh && bunnyJumpProgress >= 1.0) {
+      if (bunnyMesh && bunnyMesh.visible && bunnyJumpProgress >= 1.0) {
         bunnyJumpProgress = 0.0;
         bunnyJumpStartTime = performance.now();
         
@@ -1561,6 +1563,26 @@ function setupEventListeners() {
     });
   }
 
+  // 7C. Toggle Interactive Bunny
+  const toggleBunny = document.getElementById('toggle-bunny');
+  if (toggleBunny) {
+    toggleBunny.addEventListener('change', (e) => {
+      const enabled = e.target.checked;
+      state.bunnyEnabled = enabled;
+      if (bunnyMesh) {
+        bunnyMesh.visible = enabled;
+        if (enabled) {
+          bunnyMesh.position.set(2.1, bunnyBaseY, 6.2);
+          bunnyCurrentX = 2.1;
+          bunnyCurrentZ = 6.2;
+          bunnyTargetX = 2.1;
+          bunnyTargetZ = 6.2;
+          bunnyJumpProgress = 1.0;
+        }
+      }
+    });
+  }
+
   // 8. Toggle Control Panel (Close/Open) with Touch Support & Event Isolation
   const btnClosePanel = document.getElementById('btn-close-panel');
   const btnFloatingOpen = document.getElementById('btn-floating-open');
@@ -1682,6 +1704,16 @@ function applyPreset(presetName) {
       node.visible = true;
     }
   });
+
+  // Preset themes deactivate bunny by default
+  state.bunnyEnabled = false;
+  const toggleBunny = document.getElementById('toggle-bunny');
+  if (toggleBunny) {
+    toggleBunny.checked = false;
+  }
+  if (bunnyMesh) {
+    bunnyMesh.visible = false;
+  }
 }
 
 // Camera movement animation helper
@@ -1738,7 +1770,7 @@ function animate() {
   controls.update();
 
   // Update bunny animation
-  if (bunnyMesh) {
+  if (bunnyMesh && bunnyMesh.visible) {
     const now = performance.now();
     
     // Always face the camera view point
@@ -1846,6 +1878,7 @@ const translations = {
     labelLightingEffects: "Lighting Effects",
     labelEnableShadows: "👥 Enable Shadows",
     labelRightAwnings: "🟢 Right Side Awnings",
+    labelInteractiveBunny: "🐰 Interactive Bunny",
     btnScreenshot: "Export Visualization PNG",
     interactionHelp: "🖱️ Left Click + Drag to rotate | 🖱️ Right Click + Drag to pan | 📜 Scroll to zoom",
     loadingTitle: "Generating 3D Model...",
@@ -1904,6 +1937,7 @@ const translations = {
     labelLightingEffects: "Efectos de Iluminación",
     labelEnableShadows: "👥 Activar Sombras",
     labelRightAwnings: "🟢 Toldos del Lado Derecho",
+    labelInteractiveBunny: "🐰 Conejo Interactivo",
     btnScreenshot: "Exportar PNG de Visualización",
     interactionHelp: "🖱️ Clic Izquierdo + Arrastrar para rotar | 🖱️ Clic Derecho + Arrastrar para desplazar | 📜 Deslizar para zoom",
     loadingTitle: "Generando Modelo 3D...",
@@ -1962,6 +1996,7 @@ const translations = {
     labelLightingEffects: "Efectes d'Il·luminació",
     labelEnableShadows: "👥 Activar Ombres",
     labelRightAwnings: "🟢 Tendals del Costat Dret",
+    labelInteractiveBunny: "🐰 Conill Interactiu",
     btnScreenshot: "Exportar PNG de Visualització",
     interactionHelp: "🖱️ Clic Esquerre + Arrossegar per rotar | 🖱️ Clic Dret + Arrossegar per desplaçar | 📜 Lliscament per zoom",
     loadingTitle: "Generant Model 3D...",
@@ -2064,7 +2099,8 @@ function saveStyle(name) {
     colors: { ...state.colors },
     timeOfDay: state.timeOfDay,
     enableShadows: renderer.shadowMap.enabled,
-    rightAwningsEnabled: state.rightAwningsEnabled
+    rightAwningsEnabled: state.rightAwningsEnabled,
+    bunnyEnabled: state.bunnyEnabled
   };
   styles.push(newStyle);
   localStorage.setItem('remodel3d_saved_styles', JSON.stringify(styles));
@@ -2158,6 +2194,26 @@ function applyStyle(styleObj) {
           node.visible = styleObj.rightAwningsEnabled;
         }
       });
+    }
+  }
+
+  // Apply bunny toggle if present
+  if (styleObj.bunnyEnabled !== undefined) {
+    state.bunnyEnabled = styleObj.bunnyEnabled;
+    const toggleBunny = document.getElementById('toggle-bunny');
+    if (toggleBunny) {
+      toggleBunny.checked = styleObj.bunnyEnabled;
+    }
+    if (bunnyMesh) {
+      bunnyMesh.visible = styleObj.bunnyEnabled;
+      if (styleObj.bunnyEnabled) {
+        bunnyMesh.position.set(2.1, bunnyBaseY, 6.2);
+        bunnyCurrentX = 2.1;
+        bunnyCurrentZ = 6.2;
+        bunnyTargetX = 2.1;
+        bunnyTargetZ = 6.2;
+        bunnyJumpProgress = 1.0;
+      }
     }
   }
 
