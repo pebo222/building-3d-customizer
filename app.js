@@ -132,7 +132,7 @@ const presets = {
     railings: '#0055a5',
     frames: '#ffffff',
     roof: '#fcd116',
-    roofFixtures: '#ffffff',
+    roofFixtures: '#0055a5',
     glass: '#8ab4f8'
   }
 };
