@@ -142,6 +142,16 @@ let scene, camera, renderer, controls;
 let sunLight, hemiLight, ambientLight, streetLampLight;
 let materials = {};
 let buildingGroup;
+let bunnyMesh;
+const bunnyBaseY = 4.55;
+let bunnyLastCameraMoveTime = 0;
+let bunnyJumpProgress = 1.0;
+let bunnyJumpStartTime = 0;
+const bunnyJumpDuration = 350; // milliseconds for a quick snappy jump
+let bunnyCurrentX = 2.1;
+let bunnyCurrentZ = 6.2;
+let bunnyTargetX = 2.1;
+let bunnyTargetZ = 6.2;
 
 // --- DOM Elements ---
 const loadingOverlay = document.getElementById('loading-overlay');
@@ -524,6 +534,126 @@ function hslToHex(h, s, l) {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
+// --- Helper: Create a cute procedural 3D Bunny ---
+function createBunny() {
+  const bunnyGroup = new THREE.Group();
+  bunnyGroup.name = 'bunny';
+
+  const bunnyMat = new THREE.MeshStandardMaterial({
+    color: 0x9f6934,
+    roughness: 0.9,
+    metalness: 0.0
+  });
+  const pinkMat = new THREE.MeshStandardMaterial({
+    color: 0xffb6c1, // light pink
+    roughness: 0.8,
+    metalness: 0.0
+  });
+
+  // Body
+  const bodyGeo = new THREE.SphereGeometry(0.2, 16, 16);
+  const body = new THREE.Mesh(bodyGeo, bunnyMat);
+  body.scale.set(1.0, 0.85, 1.3);
+  body.position.set(0, 0.16, 0);
+  body.castShadow = true;
+  body.receiveShadow = true;
+  bunnyGroup.add(body);
+
+  // Head
+  const headGeo = new THREE.SphereGeometry(0.13, 16, 16);
+  const head = new THREE.Mesh(headGeo, bunnyMat);
+  head.position.set(0, 0.28, 0.18);
+  head.castShadow = true;
+  bunnyGroup.add(head);
+
+  // Ears
+  const earGeo = new THREE.SphereGeometry(0.04, 8, 16);
+  
+  // Left Ear
+  const leftEar = new THREE.Mesh(earGeo, bunnyMat);
+  leftEar.name = 'leftEar';
+  leftEar.scale.set(1, 3.5, 1);
+  leftEar.position.set(-0.06, 0.45, 0.15);
+  leftEar.rotation.set(-0.2, 0, 0.1);
+  leftEar.castShadow = true;
+  bunnyGroup.add(leftEar);
+  
+  const leftEarInner = new THREE.Mesh(earGeo, pinkMat);
+  leftEarInner.name = 'leftEarInner';
+  leftEarInner.scale.set(0.7, 2.5, 0.7);
+  leftEarInner.position.set(-0.06, 0.43, 0.17);
+  leftEarInner.rotation.set(-0.2, 0, 0.1);
+  bunnyGroup.add(leftEarInner);
+
+  // Right Ear
+  const rightEar = new THREE.Mesh(earGeo, bunnyMat);
+  rightEar.name = 'rightEar';
+  rightEar.scale.set(1, 3.5, 1);
+  rightEar.position.set(0.06, 0.45, 0.15);
+  rightEar.rotation.set(-0.2, 0, -0.1);
+  rightEar.castShadow = true;
+  bunnyGroup.add(rightEar);
+
+  const rightEarInner = new THREE.Mesh(earGeo, pinkMat);
+  rightEarInner.name = 'rightEarInner';
+  rightEarInner.scale.set(0.7, 2.5, 0.7);
+  rightEarInner.position.set(0.06, 0.43, 0.17);
+  rightEarInner.rotation.set(-0.2, 0, -0.1);
+  bunnyGroup.add(rightEarInner);
+
+  // Tail
+  const tailGeo = new THREE.SphereGeometry(0.05, 8, 8);
+  const tail = new THREE.Mesh(tailGeo, bunnyMat);
+  tail.position.set(0, 0.18, -0.22);
+  tail.castShadow = true;
+  bunnyGroup.add(tail);
+
+  // Eyes (black beads, adjusted to protrude outside head sphere)
+  const eyeGeo = new THREE.SphereGeometry(0.018, 8, 8);
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+  
+  const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+  leftEye.position.set(-0.08, 0.31, 0.28);
+  bunnyGroup.add(leftEye);
+
+  const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+  rightEye.position.set(0.08, 0.31, 0.28);
+  bunnyGroup.add(rightEye);
+
+  // Nose (tiny pink sphere, adjusted to protrude outside head sphere)
+  const noseGeo = new THREE.SphereGeometry(0.015, 8, 8);
+  const nose = new THREE.Mesh(noseGeo, pinkMat);
+  nose.position.set(0, 0.27, 0.31);
+  bunnyGroup.add(nose);
+
+  // Feet
+  const footGeo = new THREE.SphereGeometry(0.05, 8, 8);
+  
+  // Front feet
+  const flFoot = new THREE.Mesh(footGeo, bunnyMat);
+  flFoot.scale.set(1, 0.6, 1.5);
+  flFoot.position.set(-0.07, 0.03, 0.15);
+  bunnyGroup.add(flFoot);
+  
+  const frFoot = new THREE.Mesh(footGeo, bunnyMat);
+  frFoot.scale.set(1, 0.6, 1.5);
+  frFoot.position.set(0.07, 0.03, 0.15);
+  bunnyGroup.add(frFoot);
+
+  // Back feet
+  const blFoot = new THREE.Mesh(footGeo, bunnyMat);
+  blFoot.scale.set(1.2, 0.8, 1.8);
+  blFoot.position.set(-0.09, 0.04, -0.1);
+  bunnyGroup.add(blFoot);
+  
+  const brFoot = new THREE.Mesh(footGeo, bunnyMat);
+  brFoot.scale.set(1.2, 0.8, 1.8);
+  brFoot.position.set(0.09, 0.04, -0.1);
+  bunnyGroup.add(brFoot);
+
+  return bunnyGroup;
+}
+
 // --- Helper: Create a Green Roll-up Awning ---
 function createAwning(ySlabUnderside, xCenter, width, projD, bD) {
   const awningGroup = new THREE.Group();
@@ -853,6 +983,17 @@ function buildScene() {
       );
       buildingGroup.add(winGroup);
     });
+
+    if (f === 0) {
+      bunnyMesh = createBunny();
+      bunnyMesh.position.set(2.1, yPos + 0.75, 6.2);
+      bunnyCurrentX = 2.1;
+      bunnyCurrentZ = 6.2;
+      bunnyTargetX = 2.1;
+      bunnyTargetZ = 6.2;
+      bunnyJumpProgress = 1.0;
+      buildingGroup.add(bunnyMesh);
+    }
   }
 
   // --- 4B. Back Wall Windows (4 square windows per upper floor, except ground floor) ---
@@ -1118,6 +1259,35 @@ function updateLightingMode(time) {
 
 // --- UI Interaction Bindings ---
 function setupEventListeners() {
+  // OrbitControls movement detection for bunny jumping
+  if (controls) {
+    controls.addEventListener('change', () => {
+      bunnyLastCameraMoveTime = performance.now();
+      if (bunnyMesh && bunnyJumpProgress >= 1.0) {
+        bunnyJumpProgress = 0.0;
+        bunnyJumpStartTime = performance.now();
+        
+        // Store current position as the start of the jump
+        bunnyCurrentX = bunnyMesh.position.x;
+        bunnyCurrentZ = bunnyMesh.position.z;
+        
+        // Calculate the direction vector from the bunny to the camera
+        const dx = camera.position.x - bunnyCurrentX;
+        const dz = camera.position.z - bunnyCurrentZ;
+        const len = Math.sqrt(dx * dx + dz * dz);
+        if (len > 0.001) {
+          const dirX = dx / len;
+          const dirZ = dz / len;
+          
+          // Target position is 0.25m towards the camera, clamped to safe balcony bounds
+          const hopDist = 0.25;
+          bunnyTargetX = Math.max(0.6, Math.min(3.7, bunnyCurrentX + dirX * hopDist));
+          bunnyTargetZ = Math.max(5.2, Math.min(6.6, bunnyCurrentZ + dirZ * hopDist));
+        }
+      }
+    });
+  }
+
   // 1. Tab Switching
   tabButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1566,6 +1736,65 @@ function onWindowResize() {
 function animate() {
   requestAnimationFrame(animate);
   controls.update();
+
+  // Update bunny animation
+  if (bunnyMesh) {
+    const now = performance.now();
+    
+    // Always face the camera view point
+    const dx = camera.position.x - bunnyMesh.position.x;
+    const dz = camera.position.z - bunnyMesh.position.z;
+    bunnyMesh.rotation.y = Math.atan2(dx, dz);
+    
+    if (bunnyJumpProgress < 1.0) {
+      // Calculate jump progress (0.0 to 1.0)
+      const elapsed = now - bunnyJumpStartTime;
+      bunnyJumpProgress = Math.min(elapsed / bunnyJumpDuration, 1.0);
+      
+      const p = bunnyJumpProgress;
+      // Interpolate horizontal position from current to target
+      bunnyMesh.position.x = bunnyCurrentX + p * (bunnyTargetX - bunnyCurrentX);
+      bunnyMesh.position.z = bunnyCurrentZ + p * (bunnyTargetZ - bunnyCurrentZ);
+      
+      // Snappy gravity jump curve (parabolic arc, 16cm height)
+      bunnyMesh.position.y = bunnyBaseY + 4 * 0.16 * p * (1 - p);
+      
+      // Wiggle ears during jump
+      const leftEar = bunnyMesh.getObjectByName('leftEar');
+      const leftEarInner = bunnyMesh.getObjectByName('leftEarInner');
+      const rightEar = bunnyMesh.getObjectByName('rightEar');
+      const rightEarInner = bunnyMesh.getObjectByName('rightEarInner');
+      
+      if (leftEar && rightEar) {
+        const wiggle = Math.sin(p * Math.PI * 2) * 0.15;
+        leftEar.rotation.z = 0.1 + wiggle;
+        if (leftEarInner) leftEarInner.rotation.z = 0.1 + wiggle;
+        
+        rightEar.rotation.z = -0.1 - wiggle;
+        if (rightEarInner) rightEarInner.rotation.z = -0.1 - wiggle;
+      }
+    } else {
+      // Settle down at base height and target horizontal positions
+      bunnyMesh.position.x = bunnyTargetX;
+      bunnyMesh.position.z = bunnyTargetZ;
+      bunnyMesh.position.y = bunnyBaseY;
+      
+      // Reset ear rotations
+      const leftEar = bunnyMesh.getObjectByName('leftEar');
+      const leftEarInner = bunnyMesh.getObjectByName('leftEarInner');
+      const rightEar = bunnyMesh.getObjectByName('rightEar');
+      const rightEarInner = bunnyMesh.getObjectByName('rightEarInner');
+      
+      if (leftEar && rightEar) {
+        leftEar.rotation.z = 0.1;
+        if (leftEarInner) leftEarInner.rotation.z = 0.1;
+        
+        rightEar.rotation.z = -0.1;
+        if (rightEarInner) rightEarInner.rotation.z = -0.1;
+      }
+    }
+  }
+
   renderer.render(scene, camera);
 }
 
