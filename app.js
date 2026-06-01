@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 const state = {
   activePreset: 'modern-grey',
   timeOfDay: 'noon',
+  rightAwningsEnabled: true,
   colors: {
     leftWall: '#d39c82',
     frontFacade: '#d39c82',
@@ -410,7 +411,7 @@ function createAwning(ySlabUnderside, xCenter, width, projD, bD) {
   const awningBoxGeo = new THREE.BoxGeometry(width, 0.15, 0.15);
   const awningBox = new THREE.Mesh(awningBoxGeo, materials.awnings);
   const boxY = ySlabUnderside - 0.075;
-  const boxZ = bD / 2 + projD - 0.075;
+  const boxZ = bD / 2 + projD - 0.325; // Shifted back by 25cm to connect to the ceiling above
   awningBox.position.set(xCenter, boxY, boxZ);
   awningBox.castShadow = true;
   awningGroup.add(awningBox);
@@ -666,10 +667,10 @@ function buildScene() {
     }
     buildingGroup.add(railGroup);
 
-    // F. Balcony Privacy Divider (Separator between flats)
-    const dividerGeo = new THREE.BoxGeometry(0.1, 2.95, 2.2);
+    // F. Balcony Privacy Divider (Separator between flats - stops short of the front railing)
+    const dividerGeo = new THREE.BoxGeometry(0.1, 2.95, 2.0);
     const divider = new THREE.Mesh(dividerGeo, materials.dividers);
-    divider.position.set(0, yPos + 0.35 + 2.95 / 2, bD / 2 - 0.15 + 2.2 / 2);
+    divider.position.set(0, yPos + 0.35 + 2.95 / 2, bD / 2 - 0.15 + 2.0 / 2);
     divider.castShadow = true;
     divider.receiveShadow = true;
     buildingGroup.add(divider);
@@ -802,21 +803,24 @@ function buildScene() {
   // Ground floor awning is removed.
   // Each floor has 2 awnings (left side X = -2.1, right side X = 2.1, width = 3.2).
   
-  // 1st floor awnings: under 2nd floor balcony slab (underside Y = 7.1)
-  const awning1FL = createAwning(7.1, -2.1, 3.2, projD, bD);
-  const awning1FR = createAwning(7.1, 2.1, 3.2, projD, bD);
+  // 1st floor awnings: under 2nd floor balcony slab (underside Y = 7.45)
+  const awning1FL = createAwning(7.45, -2.1, 3.2, projD, bD);
+  const awning1FR = createAwning(7.45, 2.1, 3.2, projD, bD);
+  awning1FR.name = "right-awning";
   buildingGroup.add(awning1FL);
   buildingGroup.add(awning1FR);
 
-  // 2nd floor awnings: under 3rd floor balcony slab (underside Y = 10.4)
-  const awning2FL = createAwning(10.4, -2.1, 3.2, projD, bD);
-  const awning2FR = createAwning(10.4, 2.1, 3.2, projD, bD);
+  // 2nd floor awnings: under 3rd floor balcony slab (underside Y = 10.75)
+  const awning2FL = createAwning(10.75, -2.1, 3.2, projD, bD);
+  const awning2FR = createAwning(10.75, 2.1, 3.2, projD, bD);
+  awning2FR.name = "right-awning";
   buildingGroup.add(awning2FL);
   buildingGroup.add(awning2FR);
 
-  // 3rd floor awnings: under the roof slab (underside Y = 13.3)
-  const awning3FL = createAwning(13.3, -2.1, 3.2, projD, bD);
-  const awning3FR = createAwning(13.3, 2.1, 3.2, projD, bD);
+  // 3rd floor awnings: under the roof slab (underside Y = 13.7)
+  const awning3FL = createAwning(13.7, -2.1, 3.2, projD, bD);
+  const awning3FR = createAwning(13.7, 2.1, 3.2, projD, bD);
+  awning3FR.name = "right-awning";
   buildingGroup.add(awning3FL);
   buildingGroup.add(awning3FR);
 
@@ -1091,6 +1095,25 @@ function setupEventListeners() {
     });
   }
 
+  // 7B. Toggle Right Awnings
+  const toggleRightAwnings = document.getElementById('toggle-right-awnings');
+  if (toggleRightAwnings) {
+    toggleRightAwnings.addEventListener('change', (e) => {
+      const enabled = e.target.checked;
+      state.rightAwningsEnabled = enabled;
+      
+      scene.traverse((node) => {
+        if (node.name === "right-awning") {
+          node.visible = enabled;
+        }
+      });
+      
+      presetCards.forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.saved-style-card').forEach(c => c.classList.remove('active'));
+      state.activePreset = 'custom';
+    });
+  }
+
   // 8. Toggle Control Panel (Close/Open) with Touch Support & Event Isolation
   const btnClosePanel = document.getElementById('btn-close-panel');
   const btnFloatingOpen = document.getElementById('btn-floating-open');
@@ -1182,6 +1205,18 @@ function applyPreset(presetName) {
     
     if (materials[key]) {
       materials[key].color.set(val);
+    }
+  });
+
+  // Preset themes always enable all awnings by default
+  state.rightAwningsEnabled = true;
+  const toggleRightAwnings = document.getElementById('toggle-right-awnings');
+  if (toggleRightAwnings) {
+    toggleRightAwnings.checked = true;
+  }
+  scene.traverse((node) => {
+    if (node.name === "right-awning") {
+      node.visible = true;
     }
   });
 }
@@ -1284,6 +1319,7 @@ const translations = {
     btnViewSide: "Side Wall View",
     labelLightingEffects: "Lighting Effects",
     labelEnableShadows: "👥 Enable Shadows",
+    labelRightAwnings: "🟢 Right Side Awnings",
     btnScreenshot: "Export Visualization PNG",
     interactionHelp: "🖱️ Left Click + Drag to rotate | 🖱️ Right Click + Drag to pan | 📜 Scroll to zoom",
     loadingTitle: "Generating 3D Model...",
@@ -1335,6 +1371,7 @@ const translations = {
     btnViewSide: "Vista Lateral",
     labelLightingEffects: "Efectos de Iluminación",
     labelEnableShadows: "👥 Activar Sombras",
+    labelRightAwnings: "🟢 Toldos del Lado Derecho",
     btnScreenshot: "Exportar PNG de Visualización",
     interactionHelp: "🖱️ Clic Izquierdo + Arrastrar para rotar | 🖱️ Clic Derecho + Arrastrar para desplazar | 📜 Deslizar para zoom",
     loadingTitle: "Generando Modelo 3D...",
@@ -1386,6 +1423,7 @@ const translations = {
     btnViewSide: "Vista Lateral",
     labelLightingEffects: "Efectes d'Il·luminació",
     labelEnableShadows: "👥 Activar Ombres",
+    labelRightAwnings: "🟢 Tendals del Costat Dret",
     btnScreenshot: "Exportar PNG de Visualització",
     interactionHelp: "🖱️ Clic Esquerre + Arrossegar per rotar | 🖱️ Clic Dret + Arrossegar per desplaçar | 📜 Lliscament per zoom",
     loadingTitle: "Generant Model 3D...",
@@ -1477,7 +1515,8 @@ function saveStyle(name) {
     name: name || 'Custom Style',
     colors: { ...state.colors },
     timeOfDay: state.timeOfDay,
-    enableShadows: renderer.shadowMap.enabled
+    enableShadows: renderer.shadowMap.enabled,
+    rightAwningsEnabled: state.rightAwningsEnabled
   };
   styles.push(newStyle);
   localStorage.setItem('remodel3d_saved_styles', JSON.stringify(styles));
@@ -1544,6 +1583,20 @@ function applyStyle(styleObj) {
     }
   }
 
+  // Apply right side awnings toggle if present
+  if (styleObj.rightAwningsEnabled !== undefined) {
+    state.rightAwningsEnabled = styleObj.rightAwningsEnabled;
+    const toggleRightAwnings = document.getElementById('toggle-right-awnings');
+    if (toggleRightAwnings) {
+      toggleRightAwnings.checked = styleObj.rightAwningsEnabled;
+      scene.traverse((node) => {
+        if (node.name === "right-awning") {
+          node.visible = styleObj.rightAwningsEnabled;
+        }
+      });
+    }
+  }
+
   // Remove active state from preset cards because this is a custom style
   const presetCards = document.querySelectorAll('.preset-card');
   presetCards.forEach(c => c.classList.remove('active'));
@@ -1554,10 +1607,10 @@ function renderSavedStyles() {
   if (!container) return;
 
   const savedStyles = getSavedStyles();
+  const lang = document.getElementById('select-language')?.value || 'en';
+  const dict = translations[lang] || translations.en;
   
   if (savedStyles.length === 0) {
-    const lang = document.getElementById('select-language')?.value || 'en';
-    const dict = translations[lang] || translations.en;
     container.innerHTML = `<div class="empty-saved-styles">${dict.noSavedStyles || 'No saved styles yet.'}</div>`;
     return;
   }
@@ -1576,7 +1629,11 @@ function renderSavedStyles() {
     const dot3 = style.colors.balconies || '#ffffff';
     const dot4 = style.colors.glass || '#ffffff';
 
-    const timeLabel = style.timeOfDay ? style.timeOfDay.toUpperCase() : '';
+    let timeLabel = '';
+    if (style.timeOfDay) {
+      const key = 'btn' + style.timeOfDay.charAt(0).toUpperCase() + style.timeOfDay.slice(1);
+      timeLabel = (dict[key] || style.timeOfDay).toUpperCase();
+    }
 
     card.innerHTML = `
       <div class="saved-style-info">

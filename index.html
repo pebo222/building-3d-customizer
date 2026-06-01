@@ -275,12 +275,20 @@
       </div>
       <div class="control-section" style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-glass);">
         <h3 data-i18n="labelLightingEffects">Lighting Effects</h3>
-        <label class="toggle-switch" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; background: rgba(0, 0, 0, 0.15); padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.02); transition: all 0.2s ease;">
-          <span style="font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 8px;" data-i18n="labelEnableShadows">
-            👥 Enable Shadows
-          </span>
-          <input type="checkbox" id="toggle-shadows" checked style="cursor: pointer; width: 20px; height: 20px;">
-        </label>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label class="toggle-switch" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; background: rgba(0, 0, 0, 0.15); padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.02); transition: all 0.2s ease;">
+            <span style="font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 8px;" data-i18n="labelEnableShadows">
+              👥 Enable Shadows
+            </span>
+            <input type="checkbox" id="toggle-shadows" checked style="cursor: pointer; width: 20px; height: 20px;">
+          </label>
+          <label class="toggle-switch" style="display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; background: rgba(0, 0, 0, 0.15); padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.02); transition: all 0.2s ease;">
+            <span style="font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 8px;" data-i18n="labelRightAwnings">
+              🟢 Right Side Awnings
+            </span>
+            <input type="checkbox" id="toggle-right-awnings" checked style="cursor: pointer; width: 20px; height: 20px;">
+          </label>
+        </div>
       </div>
     </div>
 
