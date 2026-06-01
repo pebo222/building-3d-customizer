@@ -434,6 +434,44 @@ body {
   background: none;
 }
 
+.color-control-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-lock {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  padding: 0;
+  user-select: none;
+  outline: none;
+}
+
+.btn-lock:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.btn-lock.locked {
+  background: rgba(92, 98, 236, 0.25) !important;
+  border-color: var(--color-primary) !important;
+  color: #fff !important;
+  box-shadow: 0 0 6px var(--color-primary-glow) !important;
+}
+
+
 /* Environment Section */
 .control-section {
   margin-bottom: 24px;

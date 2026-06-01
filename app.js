@@ -8,7 +8,11 @@ const state = {
   rightAwningsEnabled: true,
   colors: {
     leftWall: '#d39c82',
+    leftWallDiagonal: '#d39c82',
+    leftWallParallel: '#d39c82',
     frontFacade: '#d39c82',
+    leftFacadeStrip: '#d39c82',
+    rightFacadeStrip: '#d39c82',
     rightWall: '#d39c82',
     backWall: '#d39c82',
     balconies: '#ffffff',
@@ -19,13 +23,35 @@ const state = {
     roof: '#d0d0d0',
     roofFixtures: '#ffffff',
     glass: '#8ab4f8'
+  },
+  lockedColors: {
+    leftWall: false,
+    leftWallDiagonal: false,
+    leftWallParallel: false,
+    frontFacade: false,
+    leftFacadeStrip: false,
+    rightFacadeStrip: false,
+    rightWall: false,
+    backWall: false,
+    balconies: false,
+    dividers: false,
+    awnings: false,
+    railings: false,
+    frames: false,
+    roof: false,
+    roofFixtures: false,
+    glass: false
   }
 };
 
 const presets = {
   'classic-peach': {
     leftWall: '#d39c82', // peach stucco
+    leftWallDiagonal: '#d39c82',
+    leftWallParallel: '#d39c82',
     frontFacade: '#d39c82',
+    leftFacadeStrip: '#d39c82',
+    rightFacadeStrip: '#d39c82',
     rightWall: '#d39c82',
     backWall: '#d39c82',
     balconies: '#ffffff', // white stucco balconies
@@ -39,7 +65,11 @@ const presets = {
   },
   'modern-grey': {
     leftWall: '#e5e5e5',
+    leftWallDiagonal: '#e5e5e5',
+    leftWallParallel: '#e5e5e5',
     frontFacade: '#e0e0e0',
+    leftFacadeStrip: '#e5e5e5',
+    rightFacadeStrip: '#e5e5e5',
     rightWall: '#e5e5e5',
     backWall: '#e5e5e5',
     balconies: '#d0d0d0',
@@ -53,7 +83,11 @@ const presets = {
   },
   'nordic-wood': {
     leftWall: '#1e2022', // slate/basalt black
+    leftWallDiagonal: '#1e2022',
+    leftWallParallel: '#1e2022',
     frontFacade: '#f2efe9', // chalk white
+    leftFacadeStrip: '#1e2022',
+    rightFacadeStrip: '#1e2022',
     rightWall: '#1e2022',
     backWall: '#1e2022',
     balconies: '#dedcd8', // concrete/sandstone grey
@@ -67,7 +101,11 @@ const presets = {
   },
   'terracotta': {
     leftWall: '#ded7c9', // sand
+    leftWallDiagonal: '#ded7c9',
+    leftWallParallel: '#ded7c9',
     frontFacade: '#e9dfcf',
+    leftFacadeStrip: '#ded7c9',
+    rightFacadeStrip: '#ded7c9',
     rightWall: '#ded7c9',
     backWall: '#ded7c9',
     balconies: '#b85a3a', // terracotta
@@ -81,7 +119,11 @@ const presets = {
   },
   'estelada': {
     leftWall: '#fcd116',
+    leftWallDiagonal: '#fcd116',
+    leftWallParallel: '#fcd116',
     frontFacade: '#fcd116',
+    leftFacadeStrip: '#fcd116',
+    rightFacadeStrip: '#fcd116',
     rightWall: '#fcd116',
     backWall: '#fcd116',
     balconies: '#da121a',
@@ -112,7 +154,11 @@ const screenshotBtn = document.getElementById('btn-screenshot');
 // Color Picker Inputs
 const colorInputs = {
   leftWall: document.getElementById('color-left-wall'),
+  leftWallDiagonal: document.getElementById('color-left-wall-diagonal'),
+  leftWallParallel: document.getElementById('color-left-wall-parallel'),
   frontFacade: document.getElementById('color-front-facade'),
+  leftFacadeStrip: document.getElementById('color-left-facade-strip'),
+  rightFacadeStrip: document.getElementById('color-right-facade-strip'),
   rightWall: document.getElementById('color-right-wall'),
   backWall: document.getElementById('color-back-wall'),
   balconies: document.getElementById('color-balconies'),
@@ -127,7 +173,11 @@ const colorInputs = {
 
 const colorLabels = {
   leftWall: document.getElementById('val-left-wall'),
+  leftWallDiagonal: document.getElementById('val-left-wall-diagonal'),
+  leftWallParallel: document.getElementById('val-left-wall-parallel'),
   frontFacade: document.getElementById('val-front-facade'),
+  leftFacadeStrip: document.getElementById('val-left-facade-strip'),
+  rightFacadeStrip: document.getElementById('val-right-facade-strip'),
   rightWall: document.getElementById('val-right-wall'),
   backWall: document.getElementById('val-back-wall'),
   balconies: document.getElementById('val-balconies'),
@@ -316,9 +366,13 @@ function updateGlassEnvironment(time) {
 // --- Materials Initialization ---
 function initMaterials() {
   materials.leftWall = new THREE.MeshStandardMaterial({ color: 0xd39c82, roughness: 0.8, metalness: 0.0, side: THREE.DoubleSide });
+  materials.leftWallDiagonal = new THREE.MeshStandardMaterial({ color: 0xd39c82, roughness: 0.8, metalness: 0.0, side: THREE.DoubleSide });
+  materials.leftWallParallel = new THREE.MeshStandardMaterial({ color: 0xd39c82, roughness: 0.8, metalness: 0.0, side: THREE.DoubleSide });
   materials.rightWall = new THREE.MeshStandardMaterial({ color: 0xd39c82, roughness: 0.8, metalness: 0.0, side: THREE.DoubleSide });
   materials.backWall = new THREE.MeshStandardMaterial({ color: 0xd39c82, roughness: 0.8, metalness: 0.0, side: THREE.DoubleSide });
   materials.frontFacade = new THREE.MeshStandardMaterial({ color: 0xd39c82, roughness: 0.75, metalness: 0.0, side: THREE.DoubleSide });
+  materials.leftFacadeStrip = new THREE.MeshStandardMaterial({ color: 0xd39c82, roughness: 0.8, metalness: 0.0, side: THREE.DoubleSide });
+  materials.rightFacadeStrip = new THREE.MeshStandardMaterial({ color: 0xd39c82, roughness: 0.8, metalness: 0.0, side: THREE.DoubleSide });
   materials.balconies = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6, metalness: 0.0, side: THREE.DoubleSide });
   materials.dividers = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.6, metalness: 0.0, side: THREE.DoubleSide });
   materials.awnings = new THREE.MeshStandardMaterial({ color: 0x1b6e4e, roughness: 0.9, metalness: 0.0, side: THREE.DoubleSide });
@@ -403,6 +457,73 @@ function createHollowFrame(w, h, depth, border, x, y, z, frameMat, glassMat, isG
   return group;
 }
 
+// --- Color Conversion Helpers ---
+function hexToHsl(hex) {
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) return { h: 0, s: 0, l: 0 };
+  let r = parseInt(result[1], 16) / 255;
+  let g = parseInt(result[2], 16) / 255;
+  let b = parseInt(result[3], 16) / 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0;
+  } else {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h /= 6;
+  }
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100)
+  };
+}
+
+function hslToHex(h, s, l) {
+  s /= 100;
+  l /= 100;
+  let r, g, b;
+
+  if (s === 0) {
+    r = g = b = l;
+  } else {
+    const hue2rgb = (p, q, t) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    r = hue2rgb(p, q, h / 360 + 1/3);
+    g = hue2rgb(p, q, h / 360);
+    b = hue2rgb(p, q, h / 360 - 1/3);
+  }
+
+  const toHex = x => {
+    const hex = Math.round(x * 255).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 // --- Helper: Create a Green Roll-up Awning ---
 function createAwning(ySlabUnderside, xCenter, width, projD, bD) {
   const awningGroup = new THREE.Group();
@@ -463,11 +584,11 @@ function buildScene() {
   scene.add(walkway);
 
   // --- 2. Building Walls (Angled 4-Wall Enclosure, Closed / No Holes) ---
-  // Left Side Wall Segment 1 (Front straight section, Z: 5.25 to -2.0)
-  const segment1L = bD / 2 - (-2.0); // 7.25
+  // Left Side Wall Segment 1 (Front straight section, shortened by 0.3m to clear front facade, Z: 4.95 to -2.0)
+  const segment1L = (bD / 2 - 0.3) - (-2.0); // 6.95
   const leftWall1Geo = new THREE.BoxGeometry(0.3, bH, segment1L);
   const leftWall1 = new THREE.Mesh(leftWall1Geo, materials.leftWall);
-  leftWall1.position.set(-bW / 2, bH / 2, (bD / 2 - 2.0) / 2); // Center: Z = 1.625
+  leftWall1.position.set(-bW / 2, bH / 2, ((bD / 2 - 0.3) + -2.0) / 2); // Center: Z = 1.475
   leftWall1.castShadow = true;
   leftWall1.receiveShadow = true;
   leftWall1.name = 'leftWall1';
@@ -477,17 +598,17 @@ function buildScene() {
   const xStart = -bW / 2; // -4.5
   const zStart = -2.0;
 
-  // Truncated end points to create a 1.6m wide chamfer
-  const xEndChamfer1 = -6.785;
-  const zEndChamfer1 = -5.96;
-  const xEndChamfer2 = -5.856;
-  const zEndChamfer2 = -7.262;
+  // Truncated end points to create a straight wall parallel to the right wall (X coordinates match)
+  const xEndChamfer1 = -9.5;
+  const zEndChamfer1 = -6.5;
+  const xEndChamfer2 = -9.5;
+  const zEndChamfer2 = -10.0;
 
   const segment2Length = Math.sqrt(Math.pow(xEndChamfer1 - xStart, 2) + Math.pow(zEndChamfer1 - zStart, 2)); // ~4.57
   const segment2H = bH;
   
   const leftWall2Geo = new THREE.BoxGeometry(0.3, segment2H, segment2Length);
-  const leftWall2 = new THREE.Mesh(leftWall2Geo, materials.leftWall);
+  const leftWall2 = new THREE.Mesh(leftWall2Geo, materials.leftWallDiagonal);
   const midX = (xStart + xEndChamfer1) / 2;
   const midZ = (zStart + zEndChamfer1) / 2;
   leftWall2.position.set(midX, segment2H / 2, midZ);
@@ -497,10 +618,10 @@ function buildScene() {
   leftWall2.name = 'leftWall2';
   buildingGroup.add(leftWall2);
 
-  // Chamfer / Truncation Wall Segment (1.6m wide)
-  const chamferLength = 1.6;
+  // Chamfer / Truncation Wall Segment (Parallel to right wall)
+  const chamferLength = Math.sqrt(Math.pow(xEndChamfer2 - xEndChamfer1, 2) + Math.pow(zEndChamfer2 - zEndChamfer1, 2));
   const chamferWallGeo = new THREE.BoxGeometry(0.3, bH, chamferLength);
-  const chamferWall = new THREE.Mesh(chamferWallGeo, materials.leftWall);
+  const chamferWall = new THREE.Mesh(chamferWallGeo, materials.leftWallParallel);
   const chamferMidX = (xEndChamfer1 + xEndChamfer2) / 2;
   const chamferMidZ = (zEndChamfer1 + zEndChamfer2) / 2;
   chamferWall.position.set(chamferMidX, bH / 2, chamferMidZ);
@@ -510,10 +631,10 @@ function buildScene() {
   chamferWall.name = 'chamferWall';
   buildingGroup.add(chamferWall);
 
-  // Right Side Wall (runs straight along X = bW/2, Z: 5.25 to -5.25)
-  const rightWallGeo = new THREE.BoxGeometry(0.3, bH, bD);
+  // Right Side Wall (runs straight along X = bW/2, shortened by 0.3m to clear front facade, Z: 4.95 to -5.25)
+  const rightWallGeo = new THREE.BoxGeometry(0.3, bH, bD - 0.3); // 10.2
   const rightWall = new THREE.Mesh(rightWallGeo, materials.rightWall);
-  rightWall.position.set(bW / 2, bH / 2, 0);
+  rightWall.position.set(bW / 2, bH / 2, -0.15);
   rightWall.castShadow = true;
   rightWall.receiveShadow = true;
   buildingGroup.add(rightWall);
@@ -546,6 +667,40 @@ function buildScene() {
   frontWall.receiveShadow = true;
   buildingGroup.add(frontWall);
 
+  // Left Facade Strip (Vertical Column on the Left of Front Facade)
+  const leftFacadeStripGeo = new THREE.BoxGeometry(0.3, bH, 0.3);
+  const leftFacadeStripMats = [
+    materials.leftWall, // +X
+    materials.leftWall, // -X (visible left side face)
+    materials.leftWall, // +Y
+    materials.leftWall, // -Y
+    materials.leftFacadeStrip, // +Z (visible front face)
+    materials.leftWall  // -Z
+  ];
+  const leftFacadeStrip = new THREE.Mesh(leftFacadeStripGeo, leftFacadeStripMats);
+  leftFacadeStrip.position.set(-bW / 2, bH / 2, bD / 2 - 0.15);
+  leftFacadeStrip.castShadow = true;
+  leftFacadeStrip.receiveShadow = true;
+  leftFacadeStrip.name = 'leftFacadeStrip';
+  buildingGroup.add(leftFacadeStrip);
+
+  // Right Facade Strip (Vertical Column on the Right of Front Facade)
+  const rightFacadeStripGeo = new THREE.BoxGeometry(0.3, bH, 0.3);
+  const rightFacadeStripMats = [
+    materials.rightWall, // +X (visible right side face)
+    materials.rightWall, // -X
+    materials.rightWall, // +Y
+    materials.rightWall, // -Y
+    materials.rightFacadeStrip, // +Z (visible front face)
+    materials.rightWall  // -Z
+  ];
+  const rightFacadeStrip = new THREE.Mesh(rightFacadeStripGeo, rightFacadeStripMats);
+  rightFacadeStrip.position.set(bW / 2, bH / 2, bD / 2 - 0.15);
+  rightFacadeStrip.castShadow = true;
+  rightFacadeStrip.receiveShadow = true;
+  rightFacadeStrip.name = 'rightFacadeStrip';
+  buildingGroup.add(rightFacadeStrip);
+
   // --- 3. Custom Extruded Slabs (Floor and Ceiling of Interior) ---
   const halfW = bW / 2 - 0.2;
   const projD = 2.2;
@@ -563,12 +718,12 @@ function buildScene() {
   // Roof shape with projecting balcony at the front
   const roofShape = new THREE.Shape();
   roofShape.moveTo(bW / 2, 5.25);          // Back-Right (4.5, 5.25)
-  roofShape.lineTo(bW / 2, -bD / 2);       // Front-Right (4.5, -5.25)
-  roofShape.lineTo(halfW, -bD / 2);        // Right facade balcony corner (4.3, -5.25)
+  roofShape.lineTo(bW / 2, -(bD / 2 - 0.3)); // Front-Right wall corner (4.5, -4.95)
+  roofShape.lineTo(halfW, -(bD / 2 - 0.3));  // Step inward (4.3, -4.95)
   roofShape.lineTo(halfW, -(bD / 2 + projD)); // Front-Right balcony corner (4.3, -7.45)
   roofShape.lineTo(-halfW, -(bD / 2 + projD)); // Front-Left balcony corner (-4.3, -7.45)
-  roofShape.lineTo(-halfW, -bD / 2);       // Left facade balcony corner (-4.3, -5.25)
-  roofShape.lineTo(-bW / 2, -bD / 2);      // Front-Left (-4.5, -5.25)
+  roofShape.lineTo(-halfW, -(bD / 2 - 0.3));  // Step inward (-4.3, -4.95)
+  roofShape.lineTo(-bW / 2, -(bD / 2 - 0.3)); // Step outward to left wall (-4.5, -4.95)
   roofShape.lineTo(-bW / 2, 2.0);          // Left-Bend (-4.5, 2.0)
   roofShape.lineTo(xEndChamfer1, -zEndChamfer1); // Back-Left Chamfer Corner 1
   roofShape.lineTo(xEndChamfer2, -zEndChamfer2); // Back-Left Chamfer Corner 2
@@ -731,12 +886,12 @@ function buildScene() {
     new THREE.Vector3(xEndChamfer2, 0, zEndChamfer2),
     new THREE.Vector3(xEndChamfer1, 0, zEndChamfer1),
     new THREE.Vector3(-bW / 2, 0, -2.0),
-    new THREE.Vector3(-bW / 2, 0, bD / 2),
-    new THREE.Vector3(-halfW, 0, bD / 2),
+    new THREE.Vector3(-bW / 2, 0, bD / 2 - 0.3),
+    new THREE.Vector3(-halfW, 0, bD / 2 - 0.3),
     new THREE.Vector3(-halfW, 0, bD / 2 + projD),
     new THREE.Vector3(halfW, 0, bD / 2 + projD),
-    new THREE.Vector3(halfW, 0, bD / 2),
-    new THREE.Vector3(bW / 2, 0, bD / 2)
+    new THREE.Vector3(halfW, 0, bD / 2 - 0.3),
+    new THREE.Vector3(bW / 2, 0, bD / 2 - 0.3)
   ];
 
   for (let i = 0; i < roofCorners.length; i++) {
@@ -847,13 +1002,6 @@ function buildScene() {
   mainPipe1.castShadow = true;
   pipeGroup.add(mainPipe1);
 
-  // Side downpipe (attaches to side wall segment 2 at the chamfer corner)
-  const mainPipeGeo2 = new THREE.CylinderGeometry(0.06, 0.06, segment2H, 8);
-  const mainPipe2 = new THREE.Mesh(mainPipeGeo2, materials.railings);
-  mainPipe2.position.set(xEndChamfer1 + 0.1, segment2H / 2, zEndChamfer1 + 0.15);
-  mainPipe2.castShadow = true;
-  pipeGroup.add(mainPipe2);
-
   const bracketGeo = new THREE.BoxGeometry(0.18, 0.04, 0.18);
   const numBrackets = 6;
   for (let i = 0; i < numBrackets; i++) {
@@ -862,12 +1010,6 @@ function buildScene() {
     const br1 = new THREE.Mesh(bracketGeo, materials.railings);
     br1.position.set(-bW / 2 + 0.05, yPos1, bD / 2 - 0.15);
     pipeGroup.add(br1);
-
-    // Side pipe brackets (max Y = 13.8, matching side wall height 14.3)
-    const yPos2 = 1.0 + i * (12.8 / (numBrackets - 1));
-    const br2 = new THREE.Mesh(bracketGeo, materials.railings);
-    br2.position.set(xEndChamfer1 + 0.05, yPos2, zEndChamfer1 + 0.15);
-    pipeGroup.add(br2);
   }
   buildingGroup.add(pipeGroup);
 
@@ -1017,15 +1159,150 @@ function setupEventListeners() {
     });
   });
 
-  // 3B. Randomize Colors Button
+  // 3B. Lock/Unlock Color Buttons
+  document.querySelectorAll('.btn-lock').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const key = btn.dataset.colorKey;
+      state.lockedColors[key] = !state.lockedColors[key];
+      
+      const isLocked = state.lockedColors[key];
+      btn.classList.toggle('locked', isLocked);
+      btn.textContent = isLocked ? '🔒' : '🔓';
+      
+      // Update dynamic tooltip title
+      const activeLang = document.getElementById('select-language')?.value || 'en';
+      const dict = translations[activeLang] || translations['en'];
+      const titleText = isLocked ? (dict.unlockTitle || "Unlock Color") : (dict.lockTitle || "Lock Color");
+      btn.setAttribute('title', titleText);
+      btn.setAttribute('aria-label', titleText);
+    });
+  });
+
+  // 3C. Randomize Colors Button with Smart Harmonization
   document.getElementById('btn-randomize').addEventListener('click', () => {
-    Object.keys(colorInputs).forEach(key => {
-      const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
-      state.colors[key] = randomColor;
-      if (colorInputs[key]) colorInputs[key].value = randomColor;
-      if (colorLabels[key]) colorLabels[key].textContent = randomColor.toUpperCase();
+    const currentColors = { ...state.colors };
+    const lockedKeys = Object.keys(state.colors).filter(key => state.lockedColors[key]);
+
+    const getHslOf = key => hexToHsl(currentColors[key]);
+
+    // Determine HSL seed
+    let seedH = Math.floor(Math.random() * 360);
+    let seedS = 20 + Math.floor(Math.random() * 20); // 20% - 40%
+    let seedL = 75 + Math.floor(Math.random() * 15); // 75% - 90% (light stucco)
+    let hasSeed = false;
+
+    const wallKeys = ['leftWall', 'leftWallDiagonal', 'leftWallParallel', 'frontFacade', 'leftFacadeStrip', 'rightFacadeStrip', 'rightWall', 'backWall'];
+    const structureKeys = ['balconies', 'roof', 'dividers', 'roofFixtures'];
+    
+    let seedKey = lockedKeys.find(k => wallKeys.includes(k)) || 
+                  lockedKeys.find(k => structureKeys.includes(k)) || 
+                  lockedKeys[0];
+
+    if (seedKey) {
+      const hsl = getHslOf(seedKey);
+      seedH = hsl.h;
+      seedS = hsl.s;
+      seedL = hsl.l;
+      hasSeed = true;
+    }
+
+    // Determine random harmony mode
+    const harmonyMode = Math.floor(Math.random() * 3); // 0 = Monochromatic, 1 = Analogous, 2 = Complementary
+
+    Object.keys(state.colors).forEach(key => {
+      if (state.lockedColors[key]) return; // Skip locked elements
+
+      let nextColorHex;
+
+      if (wallKeys.includes(key)) {
+        const anotherLockedWall = lockedKeys.find(k => wallKeys.includes(k));
+        if (anotherLockedWall) {
+          const hsl = getHslOf(anotherLockedWall);
+          let lOffset = 0;
+          if (key === 'frontFacade') {
+            lOffset = (hsl.l > 50) ? -5 : 5;
+          }
+          nextColorHex = hslToHex(hsl.h, hsl.s, Math.max(10, Math.min(95, hsl.l + lOffset)));
+        } else {
+          let h = seedH;
+          if (hasSeed) {
+            if (harmonyMode === 1) { // Analogous
+              h = (seedH + (Math.random() > 0.5 ? 30 : -30)) % 360;
+            } else if (harmonyMode === 2) { // Complementary
+              h = (seedH + 180) % 360;
+            }
+          }
+          let s = Math.max(5, Math.min(45, seedS));
+          let l = seedL;
+          if (key === 'frontFacade') {
+            l = Math.max(15, Math.min(95, seedL + (seedL > 50 ? -5 : 5)));
+          }
+          nextColorHex = hslToHex(h, s, l);
+        }
+      }
+      else if (structureKeys.includes(key)) {
+        const anotherLockedStruct = lockedKeys.find(k => structureKeys.includes(k));
+        if (anotherLockedStruct) {
+          const hsl = getHslOf(anotherLockedStruct);
+          let lOffset = 0;
+          if (key === 'roof') lOffset = -5;
+          nextColorHex = hslToHex(hsl.h, hsl.s, Math.max(10, Math.min(95, hsl.l + lOffset)));
+        } else {
+          let h = seedH;
+          let s = Math.min(5, seedS);
+          const isLight = (Math.random() > 0.3);
+          let l = isLight ? 85 + Math.floor(Math.random() * 10) : 18 + Math.floor(Math.random() * 10);
+          if (key === 'roof') l = Math.max(10, l - 5);
+          nextColorHex = hslToHex(h, s, l);
+        }
+      }
+      else if (key === 'awnings') {
+        let h = (seedH + 180) % 360;
+        if (harmonyMode === 1) {
+          h = (seedH + 30) % 360;
+        } else if (harmonyMode === 0) {
+          h = seedH;
+        }
+        let s = 60 + Math.floor(Math.random() * 25);
+        let l = 35 + Math.floor(Math.random() * 20);
+        nextColorHex = hslToHex(h, s, l);
+      }
+      else if (key === 'railings') {
+        const rand = Math.random();
+        if (rand < 0.6) {
+          nextColorHex = '#222222';
+        } else if (rand < 0.8) {
+          nextColorHex = '#3e352f';
+        } else {
+          nextColorHex = '#eeeeee';
+        }
+      }
+      else if (key === 'frames') {
+        const rand = Math.random();
+        if (rand < 0.4) {
+          nextColorHex = '#f8f8f8';
+        } else if (rand < 0.7) {
+          nextColorHex = '#282828';
+        } else {
+          nextColorHex = hslToHex(30, 40, 45); // Wood brown
+        }
+      }
+      else if (key === 'glass') {
+        const rand = Math.random();
+        let h = 205;
+        if (rand < 0.3) h = 165;
+        else if (rand < 0.5) h = 0;
+        let s = (h === 0) ? 0 : 25 + Math.floor(Math.random() * 15);
+        let l = 75 + Math.floor(Math.random() * 10);
+        nextColorHex = hslToHex(h, s, l);
+      }
+
+      state.colors[key] = nextColorHex;
+      if (colorInputs[key]) colorInputs[key].value = nextColorHex;
+      if (colorLabels[key]) colorLabels[key].textContent = nextColorHex.toUpperCase();
       if (materials[key]) {
-        materials[key].color.set(randomColor);
+        materials[key].color.set(nextColorHex);
       }
     });
 
@@ -1208,6 +1485,22 @@ function applyPreset(presetName) {
     }
   });
 
+  // Unlock all colors when a preset is applied
+  if (state.lockedColors) {
+    Object.keys(state.lockedColors).forEach(key => {
+      state.lockedColors[key] = false;
+    });
+  }
+  document.querySelectorAll('.btn-lock').forEach(btn => {
+    btn.classList.remove('locked');
+    btn.textContent = '🔓';
+    const activeLang = document.getElementById('select-language')?.value || 'en';
+    const dict = translations[activeLang] || translations['en'];
+    const titleText = dict.lockTitle || "Lock Color";
+    btn.setAttribute('title', titleText);
+    btn.setAttribute('aria-label', titleText);
+  });
+
   // Preset themes always enable all awnings by default
   state.rightAwningsEnabled = true;
   const toggleRightAwnings = document.getElementById('toggle-right-awnings');
@@ -1296,8 +1589,12 @@ const translations = {
     presetEsteladaDesc: "Catalan Independence flag themed walls and colors",
     colorsHeading: "Customize Material Colors",
     btnRandomize: "🎲 Randomize All Colors",
-    labelLeftWall: "Left Side Wall",
+    labelLeftWall: "Left Wall (Front Segment)",
+    labelLeftWallDiagonal: "Left Wall (Diagonal Segment)",
+    labelLeftWallParallel: "Left Wall (Parallel Segment)",
     labelFrontFacade: "Front Facade",
+    labelLeftFacadeStrip: "Left Facade Strip",
+    labelRightFacadeStrip: "Right Facade Strip",
     labelRightWall: "Right Side Wall",
     labelBackWall: "Back Wall",
     labelBalconies: "Balcony Slabs & Pillars",
@@ -1328,7 +1625,9 @@ const translations = {
     savedStylesHeading: "My Favorite Styles",
     btnSaveStyle: "Save Style",
     saveStylePlaceholder: "Name your style...",
-    noSavedStyles: "No saved styles yet."
+    noSavedStyles: "No saved styles yet.",
+    lockTitle: "Lock Color",
+    unlockTitle: "Unlock Color"
   },
   es: {
     subtitle: "Visualizador de Edificios y Personalizador de Colores",
@@ -1348,8 +1647,12 @@ const translations = {
     presetEsteladaDesc: "Paredes y colores temáticos de la bandera catalana",
     colorsHeading: "Personalizar Colores de Materiales",
     btnRandomize: "🎲 Colores Aleatorios",
-    labelLeftWall: "Pared Lateral Izquierda",
+    labelLeftWall: "Pared Izq. (Tramo Frontal)",
+    labelLeftWallDiagonal: "Pared Izq. (Tramo Diagonal)",
+    labelLeftWallParallel: "Pared Izq. (Tramo Paralelo)",
     labelFrontFacade: "Fachada Frontal",
+    labelLeftFacadeStrip: "Franja Izquierda de la Fachada",
+    labelRightFacadeStrip: "Franja Derecha de la Fachada",
     labelRightWall: "Pared Lateral Derecha",
     labelBackWall: "Pared Trasera",
     labelBalconies: "Losas y Pilares de Balcón",
@@ -1380,7 +1683,9 @@ const translations = {
     savedStylesHeading: "Mis Estilos Favoritos",
     btnSaveStyle: "Guardar Estilo",
     saveStylePlaceholder: "Nombre del estilo...",
-    noSavedStyles: "Aún no hay estilos guardados."
+    noSavedStyles: "Aún no hay estilos guardados.",
+    lockTitle: "Bloquear Color",
+    unlockTitle: "Desbloquear Color"
   },
   ca: {
     subtitle: "Visualitzador d'Edificis i Personalitzador de Colors",
@@ -1400,8 +1705,12 @@ const translations = {
     presetEsteladaDesc: "Parets i colors temàtics de la bandera catalana",
     colorsHeading: "Personalitzar Colors de Materials",
     btnRandomize: "🎲 Colors Aleatoris",
-    labelLeftWall: "Paret Lateral Esquerra",
+    labelLeftWall: "Paret Esquerra (Tram Frontal)",
+    labelLeftWallDiagonal: "Paret Esquerra (Tram Diagonal)",
+    labelLeftWallParallel: "Paret Esquerra (Tram Paral·lel)",
     labelFrontFacade: "Fatxada Frontal",
+    labelLeftFacadeStrip: "Franja Esquerra de la Fatxada",
+    labelRightFacadeStrip: "Franja Dreta de la Fatxada",
     labelRightWall: "Paret Lateral Dreta",
     labelBackWall: "Paret Posterior",
     labelBalconies: "Lloses i Pilars de Balcó",
@@ -1432,7 +1741,9 @@ const translations = {
     savedStylesHeading: "Els Meus Estils Preferits",
     btnSaveStyle: "Desar Estil",
     saveStylePlaceholder: "Nom de l'estil...",
-    noSavedStyles: "Encara no hi ha estils desats."
+    noSavedStyles: "Encara no hi ha estils desats.",
+    lockTitle: "Bloquejar Color",
+    unlockTitle: "Desbloquejar Color"
   }
 };
 
@@ -1493,6 +1804,14 @@ function setLanguage(lang) {
     }
   });
 
+  // Keep lock buttons titles updated
+  document.querySelectorAll('.btn-lock').forEach(btn => {
+    const isLocked = btn.classList.contains('locked');
+    const titleText = isLocked ? (dict.unlockTitle || "Unlock Color") : (dict.lockTitle || "Lock Color");
+    btn.setAttribute('title', titleText);
+    btn.setAttribute('aria-label', titleText);
+  });
+
   // Re-render saved styles list to update locale text (e.g. empty message)
   renderSavedStyles();
 }
@@ -1545,6 +1864,22 @@ function applyStyle(styleObj) {
     if (materials[key]) {
       materials[key].color.set(val);
     }
+  });
+
+  // Unlock all colors when a style is applied
+  if (state.lockedColors) {
+    Object.keys(state.lockedColors).forEach(key => {
+      state.lockedColors[key] = false;
+    });
+  }
+  document.querySelectorAll('.btn-lock').forEach(btn => {
+    btn.classList.remove('locked');
+    btn.textContent = '🔓';
+    const activeLang = document.getElementById('select-language')?.value || 'en';
+    const dict = translations[activeLang] || translations['en'];
+    const titleText = dict.lockTitle || "Lock Color";
+    btn.setAttribute('title', titleText);
+    btn.setAttribute('aria-label', titleText);
   });
 
   // Apply time of day if present

@@ -128,11 +128,40 @@
       
       <div class="color-picker-group">
         <label for="color-left-wall" data-i18n="labelLeftWall">
-          <span>Left Side Wall</span>
+          <span>Left Wall (Front Segment)</span>
           <span class="color-value-label" id="val-left-wall">#e5e5e5</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-left-wall" value="#e5e5e5">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="leftWall" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-left-wall" value="#e5e5e5">
+          </div>
+        </div>
+      </div>
+
+      <div class="color-picker-group">
+        <label for="color-left-wall-diagonal" data-i18n="labelLeftWallDiagonal">
+          <span>Left Wall (Diagonal Segment)</span>
+          <span class="color-value-label" id="val-left-wall-diagonal">#e5e5e5</span>
+        </label>
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="leftWallDiagonal" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-left-wall-diagonal" value="#e5e5e5">
+          </div>
+        </div>
+      </div>
+
+      <div class="color-picker-group">
+        <label for="color-left-wall-parallel" data-i18n="labelLeftWallParallel">
+          <span>Left Wall (Parallel Segment)</span>
+          <span class="color-value-label" id="val-left-wall-parallel">#e5e5e5</span>
+        </label>
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="leftWallParallel" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-left-wall-parallel" value="#e5e5e5">
+          </div>
         </div>
       </div>
 
@@ -141,8 +170,37 @@
           <span>Front Facade</span>
           <span class="color-value-label" id="val-front-facade">#e0e0e0</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-front-facade" value="#e0e0e0">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="frontFacade" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-front-facade" value="#e0e0e0">
+          </div>
+        </div>
+      </div>
+
+      <div class="color-picker-group">
+        <label for="color-left-facade-strip" data-i18n="labelLeftFacadeStrip">
+          <span>Left Facade Strip</span>
+          <span class="color-value-label" id="val-left-facade-strip">#e5e5e5</span>
+        </label>
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="leftFacadeStrip" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-left-facade-strip" value="#e5e5e5">
+          </div>
+        </div>
+      </div>
+
+      <div class="color-picker-group">
+        <label for="color-right-facade-strip" data-i18n="labelRightFacadeStrip">
+          <span>Right Facade Strip</span>
+          <span class="color-value-label" id="val-right-facade-strip">#e5e5e5</span>
+        </label>
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="rightFacadeStrip" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-right-facade-strip" value="#e5e5e5">
+          </div>
         </div>
       </div>
 
@@ -151,8 +209,11 @@
           <span>Right Side Wall</span>
           <span class="color-value-label" id="val-right-wall">#e5e5e5</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-right-wall" value="#e5e5e5">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="rightWall" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-right-wall" value="#e5e5e5">
+          </div>
         </div>
       </div>
 
@@ -161,8 +222,11 @@
           <span>Back Wall</span>
           <span class="color-value-label" id="val-back-wall">#e5e5e5</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-back-wall" value="#e5e5e5">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="backWall" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-back-wall" value="#e5e5e5">
+          </div>
         </div>
       </div>
 
@@ -171,8 +235,11 @@
           <span>Balcony Slabs & Pillars</span>
           <span class="color-value-label" id="val-balconies">#d0d0d0</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-balconies" value="#d0d0d0">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="balconies" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-balconies" value="#d0d0d0">
+          </div>
         </div>
       </div>
 
@@ -181,8 +248,11 @@
           <span>Balcony Divider</span>
           <span class="color-value-label" id="val-dividers">#d0d0d0</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-dividers" value="#d0d0d0">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="dividers" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-dividers" value="#d0d0d0">
+          </div>
         </div>
       </div>
 
@@ -191,8 +261,11 @@
           <span>Awnings (Canvas fabric)</span>
           <span class="color-value-label" id="val-awnings">#1B6E4E</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-awnings" value="#1b6e4e">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="awnings" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-awnings" value="#1b6e4e">
+          </div>
         </div>
       </div>
 
@@ -201,8 +274,11 @@
           <span>Metal Railings</span>
           <span class="color-value-label" id="val-railings">#3a3a3a</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-railings" value="#3a3a3a">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="railings" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-railings" value="#3a3a3a">
+          </div>
         </div>
       </div>
 
@@ -211,8 +287,11 @@
           <span>Window & Door Frames</span>
           <span class="color-value-label" id="val-frames">#2a2a2a</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-frames" value="#2a2a2a">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="frames" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-frames" value="#2a2a2a">
+          </div>
         </div>
       </div>
 
@@ -221,8 +300,11 @@
           <span>Window Glass</span>
           <span class="color-value-label" id="val-glass">#8ab4f8</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-glass" value="#8ab4f8">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="glass" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-glass" value="#8ab4f8">
+          </div>
         </div>
       </div>
 
@@ -231,8 +313,11 @@
           <span>Roof Slab</span>
           <span class="color-value-label" id="val-roof">#d0d0d0</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-roof" value="#d0d0d0">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="roof" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-roof" value="#d0d0d0">
+          </div>
         </div>
       </div>
 
@@ -241,8 +326,11 @@
           <span>Rooftop Fixtures</span>
           <span class="color-value-label" id="val-roof-fixtures">#ffffff</span>
         </label>
-        <div class="color-input-wrapper">
-          <input type="color" id="color-roof-fixtures" value="#ffffff">
+        <div class="color-control-wrapper">
+          <button class="btn-lock" data-color-key="roofFixtures" title="Lock Color" aria-label="Lock Color">🔓</button>
+          <div class="color-input-wrapper">
+            <input type="color" id="color-roof-fixtures" value="#ffffff">
+          </div>
         </div>
       </div>
     </div>
