@@ -541,7 +541,7 @@ function createBunny() {
   bunnyGroup.name = 'bunny';
 
   const bunnyMat = new THREE.MeshStandardMaterial({
-    color: 0x9f6934,
+    color: 0x9c9c9c,
     roughness: 0.9,
     metalness: 0.0
   });
