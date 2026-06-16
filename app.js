@@ -7,7 +7,6 @@ const state = {
   timeOfDay: 'noon',
   rightAwningsEnabled: true,
   bunnyEnabled: false,
-  motorbikeEnabled: false,
   colors: {
     leftWall: '#d39c82',
     leftWallDiagonal: '#d39c82',
@@ -145,7 +144,6 @@ let sunLight, hemiLight, ambientLight, streetLampLight;
 let materials = {};
 let buildingGroup;
 let bunnyMesh;
-let scooterMesh;
 const bunnyBaseY = 4.55;
 let bunnyLastCameraMoveTime = 0;
 let bunnyJumpProgress = 1.0;
@@ -758,629 +756,6 @@ function createAwning(ySlabUnderside, xCenter, width, projD, bD) {
   return awningGroup;
 }
 
-// --- Procedural 3D Classic Honda CB350 Motorbike Builder ---
-function createScooter() {
-  const scooter = new THREE.Group();
-  scooter.name = 'scooter'; // Keep name for preset/saved style reference compatibility
-
-  // Materials
-  const bodyGreyMat = new THREE.MeshStandardMaterial({ color: 0x8a929b, roughness: 0.15, metalness: 0.85 }); // metallic gunmetal grey bodywork
-  const darkMetalMat = new THREE.MeshStandardMaterial({ color: 0x242528, roughness: 0.5, metalness: 0.7 }); // matte dark steel frame/engine parts
-  const chromeMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.05, metalness: 1.0 }); // high-gloss chrome highlights
-  const tireMat = new THREE.MeshStandardMaterial({ color: 0x1c1c1c, roughness: 0.9, metalness: 0.0 }); // rubber tires
-  const seatMat = new THREE.MeshStandardMaterial({ color: 0x3d2723, roughness: 0.85, metalness: 0.0 }); // rich brown leather seat
-  const seatTrimMat = new THREE.MeshStandardMaterial({ color: 0x2d1b18, roughness: 0.9, metalness: 0.0 }); // darker leather piping
-  const redMat = new THREE.MeshStandardMaterial({ color: 0xdd1111, roughness: 0.2, metalness: 0.1 }); // red lights/reflectors
-  const basicRedMat = new THREE.MeshBasicMaterial({ color: 0xff1111 }); // glowing brake light
-  const headlightLensMat = new THREE.MeshBasicMaterial({ color: 0xfffee0 }); // headlight glowing lens
-  const indicatorLensMat = new THREE.MeshBasicMaterial({ color: 0xff9800 }); // amber lenses
-  const screenMat = new THREE.MeshBasicMaterial({ color: 0x80deea }); // cyan digital instruments
-  const glassMat = new THREE.MeshStandardMaterial({ color: 0xe0f7fa, transparent: true, opacity: 0.4, roughness: 0.1, metalness: 0.9 }); // mirrors / windshield
-  const blackMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.65, metalness: 0.05 }); // matte black plastic
-
-  // Dimensions & Scale normalization:
-  // Standard motorbike length ~ 1.8m. Front axle Z = -0.6, Rear axle Z = 0.6.
-  // Wheel radius ~ 0.28 (17 inch wheels), width ~ 0.08.
-  
-  // 1. Double Cradle Frame (Exposed tubes cradling the engine and supporting seat/forks)
-  const frameGroup = new THREE.Group();
-  
-  const tubeGeo = new THREE.CylinderGeometry(0.016, 0.016, 0.7, 8);
-  const leftRail = new THREE.Mesh(tubeGeo, darkMetalMat);
-  leftRail.position.set(-0.08, 0.35, -0.1);
-  leftRail.rotation.x = 0.2; // angled slightly
-  
-  const rightRail = new THREE.Mesh(tubeGeo, darkMetalMat);
-  rightRail.position.set(0.08, 0.35, -0.1);
-  rightRail.rotation.x = 0.2;
-  
-  const bottomRailGeo = new THREE.CylinderGeometry(0.014, 0.014, 0.8, 8);
-  bottomRailGeo.rotateX(Math.PI / 2);
-  const leftBottomRail = new THREE.Mesh(bottomRailGeo, darkMetalMat);
-  leftBottomRail.position.set(-0.08, 0.18, 0.05);
-  const rightBottomRail = new THREE.Mesh(bottomRailGeo, darkMetalMat);
-  rightBottomRail.position.set(0.08, 0.18, 0.05);
-  
-  const backboneGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.65, 8);
-  backboneGeo.rotateX(Math.PI / 2);
-  const backbone = new THREE.Mesh(backboneGeo, darkMetalMat);
-  backbone.position.set(0, 0.6, -0.1);
-
-  // Rear swingarm
-  const swingarmGeo = new THREE.BoxGeometry(0.2, 0.03, 0.55);
-  const swingarm = new THREE.Mesh(swingarmGeo, darkMetalMat);
-  swingarm.position.set(0, 0.28, 0.3);
-  
-  frameGroup.add(leftRail, rightRail, leftBottomRail, rightBottomRail, backbone, swingarm);
-  scooter.add(frameGroup);
-
-  // 2. Front Suspension Telescopic Forks (Classic angled fork with rubber boots)
-  const forkGroup = new THREE.Group();
-  forkGroup.position.set(0, 0.55, -0.48);
-  forkGroup.rotation.x = -0.32; // classic fork rake angle (~18 degrees)
-
-  const innerForkGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.72, 8);
-  const leftForkInner = new THREE.Mesh(innerForkGeo, chromeMat);
-  leftForkInner.position.set(-0.1, 0.1, 0);
-  const rightForkInner = new THREE.Mesh(innerForkGeo, chromeMat);
-  rightForkInner.position.set(0.1, 0.1, 0);
-  forkGroup.add(leftForkInner, rightForkInner);
-
-  // Lower fork legs (sliders) in dark metal
-  const outerForkGeo = new THREE.CylinderGeometry(0.024, 0.024, 0.38, 8);
-  const leftForkOuter = new THREE.Mesh(outerForkGeo, darkMetalMat);
-  leftForkOuter.position.set(-0.1, -0.18, 0);
-  const rightForkOuter = new THREE.Mesh(outerForkGeo, darkMetalMat);
-  rightForkOuter.position.set(0.1, -0.18, 0);
-  forkGroup.add(leftForkOuter, rightForkOuter);
-
-  // Rubber fork gaiters (accordion boots) for classic details
-  const bootTorusGeo = new THREE.TorusGeometry(0.025, 0.007, 8, 16);
-  bootTorusGeo.rotateX(Math.PI / 2);
-  for (let i = 0; i < 5; i++) {
-    const yOffset = -0.05 + i * 0.03;
-    const bootL = new THREE.Mesh(bootTorusGeo, blackMat);
-    bootL.position.set(-0.1, yOffset, 0);
-    const bootR = new THREE.Mesh(bootTorusGeo, blackMat);
-    bootR.position.set(0.1, yOffset, 0);
-    forkGroup.add(bootL, bootR);
-  }
-
-  // Triple clamps (Upper and Lower steering yoke)
-  const clampGeo = new THREE.BoxGeometry(0.24, 0.025, 0.06);
-  const lowerClamp = new THREE.Mesh(clampGeo, darkMetalMat);
-  lowerClamp.position.set(0, 0.32, 0);
-  const upperClamp = new THREE.Mesh(clampGeo, chromeMat);
-  upperClamp.position.set(0, 0.44, 0);
-  forkGroup.add(lowerClamp, upperClamp);
-  
-  scooter.add(forkGroup);
-
-  // 3. Wheels & Brake Systems (Classic 17" spoke wheels with detailed discs and calipers)
-  const tireGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.08, 20);
-  tireGeo.rotateZ(Math.PI / 2); // Axle along X-axis, wheels face forward
-  const rimGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.084, 16);
-  rimGeo.rotateZ(Math.PI / 2);
-  
-  // Spokes (Grid of thin spokes radiating in the YZ plane)
-  const spokeGeo = new THREE.CylinderGeometry(0.003, 0.003, 0.21, 6);
-  
-  // Brake Discs and Calipers (YZ plane alignment)
-  const brakeDiscGeo = new THREE.CylinderGeometry(0.15, 0.15, 0.008, 16);
-  brakeDiscGeo.rotateZ(Math.PI / 2);
-  const caliperGeo = new THREE.BoxGeometry(0.04, 0.07, 0.05);
-
-  // --- Front Wheel Assembly ---
-  const frontWheelGroup = new THREE.Group();
-  frontWheelGroup.position.set(0, 0.28, -0.6); // Front axle
-  
-  const frontTire = new THREE.Mesh(tireGeo, tireMat);
-  const frontRim = new THREE.Mesh(rimGeo, chromeMat);
-  frontWheelGroup.add(frontTire, frontRim);
-
-  // 16 radial spokes crossing at angles in the YZ plane of the wheel
-  for (let i = 0; i < 16; i++) {
-    const spoke = new THREE.Mesh(spokeGeo, chromeMat);
-    spoke.rotation.x = i * (Math.PI * 2 / 16);
-    spoke.position.x = (i % 2 === 0 ? 0.015 : -0.015); // cross lacing
-    frontWheelGroup.add(spoke);
-  }
-
-  // Front brake disc
-  const frontBrakeDisc = new THREE.Mesh(brakeDiscGeo, chromeMat);
-  frontBrakeDisc.position.set(0.045, 0, 0); // mounted on the right side
-  const frontCaliper = new THREE.Mesh(caliperGeo, redMat);
-  frontCaliper.position.set(0.055, 0.11, -0.09); // clamped
-  frontWheelGroup.add(frontBrakeDisc, frontCaliper);
-
-  scooter.add(frontWheelGroup);
-
-  // --- Rear Wheel Assembly ---
-  const rearWheelGroup = new THREE.Group();
-  rearWheelGroup.position.set(0, 0.28, 0.6); // Rear axle
-  
-  const rearTire = new THREE.Mesh(tireGeo, tireMat);
-  const rearRim = new THREE.Mesh(rimGeo, chromeMat);
-  rearWheelGroup.add(rearTire, rearRim);
-
-  // 16 radial spokes in the YZ plane
-  for (let i = 0; i < 16; i++) {
-    const spoke = new THREE.Mesh(spokeGeo, chromeMat);
-    spoke.rotation.x = i * (Math.PI * 2 / 16);
-    spoke.position.x = (i % 2 === 0 ? 0.015 : -0.015);
-    rearWheelGroup.add(spoke);
-  }
-
-  // Rear brake disc & caliper
-  const rearBrakeDisc = new THREE.Mesh(brakeDiscGeo, chromeMat);
-  rearBrakeDisc.position.set(-0.045, 0, 0); // mounted on the left side
-  const rearCaliper = new THREE.Mesh(caliperGeo, redMat);
-  rearCaliper.position.set(-0.055, 0.11, 0.09);
-  rearWheelGroup.add(rearBrakeDisc, rearCaliper);
-
-  // Rear Drive Sprocket & Chain
-  const sprocketGeo = new THREE.CylinderGeometry(0.09, 0.09, 0.015, 12);
-  sprocketGeo.rotateZ(Math.PI / 2);
-  const sprocket = new THREE.Mesh(sprocketGeo, darkMetalMat);
-  sprocket.position.set(0.045, 0, 0); // right side drive
-  
-  const chainGeo = new THREE.BoxGeometry(0.01, 0.02, 0.65);
-  const topChain = new THREE.Mesh(chainGeo, darkMetalMat);
-  topChain.position.set(0.045, 0.09, -0.3);
-  const bottomChain = new THREE.Mesh(chainGeo, darkMetalMat);
-  bottomChain.position.set(0.045, -0.09, -0.3);
-  rearWheelGroup.add(sprocket, topChain, bottomChain);
-
-  scooter.add(rearWheelGroup);
-
-  // 4. Detailed Exposed Engine Block (350cc Single Cylinder with horizontal cooling fins)
-  const engineGroup = new THREE.Group();
-  engineGroup.position.set(0, 0.36, -0.08);
-
-  // Engine Crankcase (center bottom)
-  const crankcaseGeo = new THREE.BoxGeometry(0.22, 0.18, 0.28);
-  const crankcase = new THREE.Mesh(crankcaseGeo, darkMetalMat);
-  engineGroup.add(crankcase);
-
-  // Chrome left & right covers
-  const coverGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.04, 12);
-  coverGeo.rotateZ(Math.PI / 2);
-  const leftCover = new THREE.Mesh(coverGeo, chromeMat);
-  leftCover.position.set(-0.115, 0.01, 0);
-  const rightCover = new THREE.Mesh(coverGeo, chromeMat);
-  rightCover.position.set(0.115, 0.01, 0);
-  engineGroup.add(leftCover, rightCover);
-
-  // Cylinder block (vertical engine barrel, angled forward at -0.1 rad)
-  const cylinderGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.2, 10);
-  const cylinder = new THREE.Mesh(cylinderGeo, darkMetalMat);
-  cylinder.position.set(0, 0.16, -0.03);
-  cylinder.rotation.x = -0.1;
-  engineGroup.add(cylinder);
-
-  // Cylinder cooling fins (stacked horizontal plates for maximum details)
-  const finGeo = new THREE.BoxGeometry(0.16, 0.01, 0.16);
-  for (let i = 0; i < 7; i++) {
-    const fin = new THREE.Mesh(finGeo, darkMetalMat);
-    fin.position.set(0, 0.08 + i * 0.024, -0.03);
-    fin.rotation.x = -0.1;
-    engineGroup.add(fin);
-  }
-
-  // Spark plug cap & wire (red cable, chrome plug)
-  const plugGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.03, 8);
-  const sparkPlug = new THREE.Mesh(plugGeo, chromeMat);
-  sparkPlug.position.set(0, 0.27, -0.04);
-  
-  const wireGeo = new THREE.CylinderGeometry(0.005, 0.005, 0.18, 8);
-  wireGeo.rotateX(Math.PI / 2);
-  const sparkWire = new THREE.Mesh(wireGeo, redMat);
-  sparkWire.position.set(-0.04, 0.22, -0.08);
-  engineGroup.add(sparkPlug, sparkWire);
-
-  // Carburetor & Air Intake pipe (facing Z-back)
-  const intakeGeo = new THREE.CylinderGeometry(0.015, 0.015, 0.08, 8);
-  intakeGeo.rotateX(Math.PI / 2);
-  const intake = new THREE.Mesh(intakeGeo, chromeMat);
-  intake.position.set(0, 0.18, 0.1);
-  const carbGeo = new THREE.BoxGeometry(0.06, 0.06, 0.06);
-  const carb = new THREE.Mesh(carbGeo, darkMetalMat);
-  carb.position.set(0, 0.18, 0.14);
-  engineGroup.add(intake, carb);
-
-  scooter.add(engineGroup);
-
-  // 5. Megaphone Exhaust Muffler System (Right Side chrome pipe curving from engine)
-  const exhaustGroup = new THREE.Group();
-  
-  // Header pipe coming from front of cylinder, curving down
-  const headerPipeGeo1 = new THREE.CylinderGeometry(0.022, 0.022, 0.26, 8);
-  const headerPart1 = new THREE.Mesh(headerPipeGeo1, chromeMat);
-  headerPart1.position.set(0.12, 0.38, -0.18);
-  headerPart1.rotation.x = 0.5; // angled down-forward
-  
-  const headerPipeGeo2 = new THREE.CylinderGeometry(0.022, 0.022, 0.45, 8);
-  headerPipeGeo2.rotateX(Math.PI / 2);
-  const headerPart2 = new THREE.Mesh(headerPipeGeo2, chromeMat);
-  headerPart2.position.set(0.12, 0.2, -0.1);
-  
-  // Megaphone Muffler (flaring cylinder running to back right)
-  const mufflerGeo = new THREE.CylinderGeometry(0.022, 0.048, 0.6, 12);
-  mufflerGeo.rotateX(Math.PI / 2);
-  const muffler = new THREE.Mesh(mufflerGeo, chromeMat);
-  muffler.position.set(0.18, 0.26, 0.38);
-  muffler.rotation.x = -0.1; // angled slightly upward
-  
-  // Dark end-cap tip
-  const mufflerTipGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.01, 8);
-  mufflerTipGeo.rotateX(Math.PI / 2);
-  const mufflerTip = new THREE.Mesh(mufflerTipGeo, darkMetalMat);
-  mufflerTip.position.set(0, 0, 0.3); // relative to muffler
-  muffler.add(mufflerTip);
-
-  // Chrome heat shield plate
-  const heatShieldGeo = new THREE.BoxGeometry(0.01, 0.04, 0.35);
-  const heatShield = new THREE.Mesh(heatShieldGeo, chromeMat);
-  heatShield.position.set(0.04, 0.015, -0.05); // side of muffler
-  muffler.add(heatShield);
-
-  exhaustGroup.add(headerPart1, headerPart2, muffler);
-  scooter.add(exhaustGroup);
-
-  // 6. Fuel Tank (Beautiful teardrop motorcycle fuel tank sitting between seat and forks)
-  const tankGroup = new THREE.Group();
-  tankGroup.position.set(0, 0.68, -0.18);
-
-  const tankFront = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), bodyGreyMat);
-  tankFront.scale.set(1.0, 0.9, 1.0);
-  tankFront.position.set(0, 0, -0.14);
-  
-  const tankBack = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.09, 0.3, 16), bodyGreyMat);
-  tankBack.rotation.x = Math.PI / 2;
-  tankBack.scale.set(1.0, 1.0, 0.9);
-  tankBack.position.set(0, -0.015, 0.05);
-  
-  // Rubber knee pads (Classic styling details on the sides)
-  const padGeo = new THREE.BoxGeometry(0.01, 0.12, 0.18);
-  const leftPad = new THREE.Mesh(padGeo, blackMat);
-  leftPad.position.set(-0.15, -0.02, -0.04);
-  leftPad.rotation.y = 0.2;
-  const rightPad = new THREE.Mesh(padGeo, blackMat);
-  rightPad.position.set(0.15, -0.02, -0.04);
-  rightPad.rotation.y = -0.2;
-  
-  // Chrome gas cap
-  const capGeo = new THREE.CylinderGeometry(0.038, 0.038, 0.015, 10);
-  const gasCap = new THREE.Mesh(capGeo, chromeMat);
-  gasCap.position.set(0.05, 0.13, -0.12); // offset to right-top
-  gasCap.rotation.z = -0.1;
-
-  tankGroup.add(tankFront, tankBack, leftPad, rightPad, gasCap);
-  scooter.add(tankGroup);
-
-  // 7. Ribbed Leather Seat & cowls (Dark brown leather saddle with ribbed ridges)
-  const seatGroup = new THREE.Group();
-  seatGroup.position.set(0, 0.66, 0.2);
-
-  const mainSeatGeo = new THREE.BoxGeometry(0.18, 0.08, 0.46);
-  const mainSeat = new THREE.Mesh(mainSeatGeo, seatMat);
-  mainSeat.castShadow = true;
-  seatGroup.add(mainSeat);
-
-  // 6 horizontal seat ribs (stitching ridges) in dark leather
-  const ribGeo = new THREE.CylinderGeometry(0.008, 0.008, 0.176, 8);
-  ribGeo.rotateZ(Math.PI / 2);
-  for (let i = 0; i < 6; i++) {
-    const zOffset = -0.18 + i * 0.07;
-    const rib = new THREE.Mesh(ribGeo, seatTrimMat);
-    rib.position.set(0, 0.042, zOffset);
-    seatGroup.add(rib);
-  }
-
-  // Rear seat grab rail (chrome tube looping around the seat back)
-  const railTubeGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.2, 8);
-  const leftRailT = new THREE.Mesh(railTubeGeo, chromeMat);
-  leftRailT.position.set(-0.1, 0.05, 0.18);
-  const rightRailT = new THREE.Mesh(railTubeGeo, chromeMat);
-  rightRailT.position.set(0.1, 0.05, 0.18);
-  
-  const backLoopGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.2, 8);
-  backLoopGeo.rotateZ(Math.PI / 2);
-  const backLoop = new THREE.Mesh(backLoopGeo, chromeMat);
-  backLoop.position.set(0, 0.1, 0.24);
-  seatGroup.add(leftRailT, rightRailT, backLoop);
-
-  scooter.add(seatGroup);
-
-  // 8. Fenders (Mudguards - hugging the wheels)
-  // Front Fender (curves over front wheel)
-  const frontFenderGeo = new THREE.BoxGeometry(0.13, 0.02, 0.44);
-  const frontFender = new THREE.Mesh(frontFenderGeo, bodyGreyMat);
-  frontFender.position.set(0, 0.48, -0.68);
-  frontFender.rotation.x = -0.38; // matches wheel curve
-  scooter.add(frontFender);
-
-  // Rear Fender (curves over rear wheel)
-  const rearFenderGeo = new THREE.BoxGeometry(0.15, 0.02, 0.55);
-  const rearFender = new THREE.Mesh(rearFenderGeo, bodyGreyMat);
-  rearFender.position.set(0, 0.48, 0.68);
-  rearFender.rotation.x = 0.38;
-  scooter.add(rearFender);
-
-  // 9. Side covers / Battery cover (Grey panels under the seat with chrome emblem)
-  const leftCoverPanelGeo = new THREE.BoxGeometry(0.03, 0.16, 0.24);
-  const leftPanel = new THREE.Mesh(leftCoverPanelGeo, bodyGreyMat);
-  leftPanel.position.set(-0.11, 0.52, 0.12);
-  
-  const rightPanel = new THREE.Mesh(leftCoverPanelGeo, bodyGreyMat);
-  rightPanel.position.set(0.11, 0.52, 0.12);
-
-  // Emblems
-  const emblemGeo = new THREE.BoxGeometry(0.008, 0.03, 0.08);
-  const leftEmblem = new THREE.Mesh(emblemGeo, chromeMat);
-  leftEmblem.position.set(-0.116, 0.52, 0.12);
-  const rightEmblem = new THREE.Mesh(emblemGeo, chromeMat);
-  rightEmblem.position.set(0.116, 0.52, 0.12);
-
-  scooter.add(leftPanel, rightPanel, leftEmblem, rightEmblem);
-
-  // 10. Rider Footpegs, Shifter, Kickstand
-  const footpegGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.08, 8);
-  footpegGeo.rotateZ(Math.PI / 2);
-  
-  const leftPeg = new THREE.Mesh(footpegGeo, blackMat);
-  leftPeg.position.set(-0.16, 0.24, 0.02);
-  const rightPeg = new THREE.Mesh(footpegGeo, blackMat);
-  rightPeg.position.set(0.16, 0.24, 0.02);
-  
-  const pegBarGeo = new THREE.CylinderGeometry(0.008, 0.008, 0.36, 8);
-  pegBarGeo.rotateZ(Math.PI / 2);
-  const pegBar = new THREE.Mesh(pegBarGeo, chromeMat);
-  pegBar.position.set(0, 0.24, 0.02);
-  
-  scooter.add(leftPeg, rightPeg, pegBar);
-
-  // Kickstand (mounted on left side, tilted)
-  const standGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.32, 8);
-  const kickstand = new THREE.Mesh(standGeo, darkMetalMat);
-  kickstand.position.set(-0.12, 0.16, 0.02);
-  kickstand.rotation.z = 0.55; // tilted out
-  kickstand.rotation.x = 0.2;
-  scooter.add(kickstand);
-
-  // 11. Handlebars, Cockpit Gauges, Windshield (Classic cruiser bars & round twin dials)
-  const handlebarGroup = new THREE.Group();
-  handlebarGroup.position.set(0, 0.98, -0.32); // mounted at top of forks
-
-  // Main chrome riser bar
-  const mainBarGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.44, 8);
-  mainBarGeo.rotateZ(Math.PI / 2);
-  const handlebar = new THREE.Mesh(mainBarGeo, chromeMat);
-  handlebarGroup.add(handlebar);
-
-  // Grips
-  const gripGeo = new THREE.CylinderGeometry(0.016, 0.016, 0.09, 8);
-  gripGeo.rotateZ(Math.PI / 2);
-  const leftGrip = new THREE.Mesh(gripGeo, tireMat);
-  leftGrip.position.set(-0.21, 0, 0);
-  const rightGrip = new THREE.Mesh(gripGeo, tireMat);
-  rightGrip.position.set(0.21, 0, 0);
-  handlebarGroup.add(leftGrip, rightGrip);
-
-  // Brake & Clutch Levers (chrome details)
-  const leverGeo = new THREE.BoxGeometry(0.08, 0.008, 0.008);
-  leverGeo.rotateY(0.25);
-  const frontBrakeLever = new THREE.Mesh(leverGeo, chromeMat);
-  frontBrakeLever.position.set(0.16, -0.01, -0.03);
-  const clutchLever = new THREE.Mesh(leverGeo, chromeMat);
-  clutchLever.position.set(-0.16, -0.01, -0.03);
-  handlebarGroup.add(frontBrakeLever, clutchLever);
-
-  // Twin Classic Round Instruments (Speedometer and Tachometer)
-  const gaugeGeo = new THREE.CylinderGeometry(0.032, 0.032, 0.038, 8);
-  gaugeGeo.rotateX(-0.4); // angled towards rider
-  
-  const leftGauge = new THREE.Mesh(gaugeGeo, chromeMat);
-  leftGauge.position.set(-0.045, 0.04, 0.02);
-  const leftGaugeFace = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.005, 8), screenMat);
-  leftGaugeFace.position.set(0, 0.02, 0.008);
-  leftGaugeFace.rotation.x = -0.4;
-  leftGauge.add(leftGaugeFace);
-  
-  const rightGauge = new THREE.Mesh(gaugeGeo, chromeMat);
-  rightGauge.position.set(0.045, 0.04, 0.02);
-  const rightGaugeFace = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.005, 8), screenMat);
-  rightGaugeFace.position.set(0, 0.02, 0.008);
-  rightGaugeFace.rotation.x = -0.4;
-  rightGauge.add(rightGaugeFace);
-  
-  handlebarGroup.add(leftGauge, rightGauge);
-
-  // Classic Round Mirrors (Chrome backings on curved stems)
-  const stemGeo = new THREE.CylinderGeometry(0.005, 0.005, 0.16, 8);
-  const leftStem = new THREE.Mesh(stemGeo, chromeMat);
-  leftStem.position.set(-0.15, 0.09, 0.02);
-  leftStem.rotation.z = -0.3;
-  leftStem.rotation.y = 0.25;
-  const leftMirrorHead = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.015, 12), chromeMat);
-  leftMirrorHead.rotateX(Math.PI / 2);
-  leftMirrorHead.position.set(-0.19, 0.16, 0.04);
-  const leftMirrorGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.038, 0.005, 12), glassMat);
-  leftMirrorGlass.rotateX(Math.PI / 2);
-  leftMirrorGlass.position.set(-0.19, 0.16, 0.032);
-  handlebarGroup.add(leftStem, leftMirrorHead, leftMirrorGlass);
-
-  const rightStem = new THREE.Mesh(stemGeo, chromeMat);
-  rightStem.position.set(0.15, 0.09, 0.02);
-  rightStem.rotation.z = 0.3;
-  rightStem.rotation.y = -0.25;
-  const rightMirrorHead = new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.042, 0.015, 12), chromeMat);
-  rightMirrorHead.rotateX(Math.PI / 2);
-  rightMirrorHead.position.set(0.19, 0.16, 0.04);
-  const rightMirrorGlass = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.038, 0.005, 12), glassMat);
-  rightMirrorGlass.rotateX(Math.PI / 2);
-  rightMirrorGlass.position.set(0.19, 0.16, 0.032);
-  handlebarGroup.add(rightStem, rightMirrorHead, rightMirrorGlass);
-
-  // Sleek windscreen above dials
-  const screenGeo = new THREE.BoxGeometry(0.24, 0.18, 0.015);
-  const windscreen = new THREE.Mesh(screenGeo, glassMat);
-  windscreen.position.set(0, 0.15, -0.05);
-  windscreen.rotation.x = -0.25;
-  handlebarGroup.add(windscreen);
-
-  scooter.add(handlebarGroup);
-
-  // 12. Lights & Signals (Round classic chrome headlight, tail light, indicators)
-  // Round Headlight (mounted in front of triple clamps)
-  const headlightBucket = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.1, 12), chromeMat);
-  headlightBucket.rotateX(Math.PI / 2);
-  headlightBucket.position.set(0, 0.88, -0.45);
-  
-  const headlightLens = new THREE.Mesh(new THREE.CylinderGeometry(0.076, 0.076, 0.01, 12), headlightLensMat);
-  headlightLens.rotateX(Math.PI / 2);
-  headlightLens.position.set(0, 0, -0.052); // relative to bucket
-  headlightBucket.add(headlightLens);
-  scooter.add(headlightBucket);
-
-  // Front indicators (Left & Right round orange indicators)
-  const indicatorHousingGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.03, 8);
-  indicatorHousingGeo.rotateZ(Math.PI / 2);
-  const indicatorLensGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.01, 8);
-  indicatorLensGeo.rotateZ(Math.PI / 2);
-
-  const frontLeftInd = new THREE.Mesh(indicatorHousingGeo, darkMetalMat);
-  frontLeftInd.position.set(-0.18, 0.84, -0.44);
-  const frontLeftLens = new THREE.Mesh(indicatorLensGeo, indicatorLensMat);
-  frontLeftLens.position.set(-0.016, 0, 0);
-  frontLeftInd.add(frontLeftLens);
-
-  const frontRightInd = new THREE.Mesh(indicatorHousingGeo, darkMetalMat);
-  frontRightInd.position.set(0.18, 0.84, -0.44);
-  const frontRightLens = new THREE.Mesh(indicatorLensGeo, indicatorLensMat);
-  frontRightLens.position.set(0.016, 0, 0);
-  frontRightInd.add(frontRightLens);
-
-  scooter.add(frontLeftInd, frontRightInd);
-
-  // Rear tail light (mounted on rear fender)
-  const tailLightGroup = new THREE.Group();
-  tailLightGroup.position.set(0, 0.55, 0.88);
-  
-  const tailLightBracket = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.04, 0.04), chromeMat);
-  const tailLightLens = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.03, 0.02), basicRedMat);
-  tailLightLens.position.set(0, 0, 0.025);
-  tailLightGroup.add(tailLightBracket, tailLightLens);
-  scooter.add(tailLightGroup);
-
-  // Rear indicators
-  const rearLeftInd = new THREE.Mesh(indicatorHousingGeo, darkMetalMat);
-  rearLeftInd.position.set(-0.16, 0.52, 0.8);
-  const rearLeftLens = new THREE.Mesh(indicatorLensGeo, indicatorLensMat);
-  rearLeftLens.position.set(-0.016, 0, 0);
-  rearLeftInd.add(rearLeftLens);
-
-  const rearRightInd = new THREE.Mesh(indicatorHousingGeo, darkMetalMat);
-  rearRightInd.position.set(0.16, 0.52, 0.8);
-  const rearRightLens = new THREE.Mesh(indicatorLensGeo, indicatorLensMat);
-  rearRightLens.position.set(0.016, 0, 0);
-  rearRightInd.add(rearRightLens);
-
-  scooter.add(rearLeftInd, rearRightInd);
-
-  // Red Honda Logo (mounted below headlight on fork clamp)
-  const logoGeo = new THREE.BoxGeometry(0.08, 0.03, 0.015);
-  const logo = new THREE.Mesh(logoGeo, redMat);
-  logo.position.set(0, 0.78, -0.4);
-  scooter.add(logo);
-
-  // 13. Rear Shock Absorbers (Rear swingarm to frame rail suspension with chrome coil springs)
-  const shockGeo = new THREE.CylinderGeometry(0.01, 0.01, 0.38, 8);
-  const leftShock = new THREE.Mesh(shockGeo, darkMetalMat);
-  leftShock.position.set(-0.13, 0.44, 0.44);
-  leftShock.rotation.x = -0.3; // angled forward
-  
-  const rightShock = new THREE.Mesh(shockGeo, darkMetalMat);
-  rightShock.position.set(0.13, 0.44, 0.44);
-  rightShock.rotation.x = -0.3;
-
-  const coilCount = 8;
-  const torusGeo = new THREE.TorusGeometry(0.018, 0.005, 8, 16);
-  torusGeo.rotateX(Math.PI / 2);
-  for (let i = 0; i < coilCount; i++) {
-    const yOffset = -0.14 + i * 0.038;
-    const coilL = new THREE.Mesh(torusGeo, chromeMat);
-    coilL.position.set(0, yOffset, 0);
-    leftShock.add(coilL);
-    
-    const coilR = new THREE.Mesh(torusGeo, chromeMat);
-    coilR.position.set(0, yOffset, 0);
-    rightShock.add(coilR);
-  }
-  scooter.add(leftShock, rightShock);
-
-  // 14. License Plate Assembly (mounted on rear fender below tail light)
-  const plateHolder = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.12, 0.015), darkMetalMat);
-  plateHolder.position.set(0, 0.38, 0.94);
-  plateHolder.rotation.x = -0.15; // angled down
-  
-  const plateWhite = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.11, 0.005), chromeMat);
-  plateWhite.position.set(0, 0, 0.008);
-  plateHolder.add(plateWhite);
-  
-  const blueStrip = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.11, 0.006), new THREE.MeshBasicMaterial({ color: 0x003399 }));
-  blueStrip.position.set(-0.06, 0, 0.001);
-  plateWhite.add(blueStrip);
-  scooter.add(plateHolder);
-
-  // 15. Rear Rack and Adventure Top Case (Helmet box)
-  // Rear chrome support rack
-  const rackGeo = new THREE.BoxGeometry(0.18, 0.02, 0.22);
-  const rack = new THREE.Mesh(rackGeo, chromeMat);
-  rack.position.set(0, 0.74, 0.52);
-  scooter.add(rack);
-
-  // Helmet box (Top Case) styled as a high-quality aluminum adventure trunk
-  const boxGeo = new THREE.BoxGeometry(0.28, 0.24, 0.28);
-  const helmetBox = new THREE.Mesh(boxGeo, darkMetalMat);
-  helmetBox.position.set(0, 0.85, 0.52);
-  
-  // Metallic grey top cover
-  const boxCover = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.04, 0.26), bodyGreyMat);
-  boxCover.position.set(0, 0.13, 0);
-  helmetBox.add(boxCover);
-  
-  // Chrome corner reinforcements (4 corners)
-  const cornerGeo = new THREE.BoxGeometry(0.03, 0.24, 0.03);
-  const c1 = new THREE.Mesh(cornerGeo, chromeMat); c1.position.set(-0.13, 0, -0.13);
-  const c2 = new THREE.Mesh(cornerGeo, chromeMat); c2.position.set(0.13, 0, -0.13);
-  const c3 = new THREE.Mesh(cornerGeo, chromeMat); c3.position.set(-0.13, 0, 0.13);
-  const c4 = new THREE.Mesh(cornerGeo, chromeMat); c4.position.set(0.13, 0, 0.13);
-  helmetBox.add(c1, c2, c3, c4);
-
-  // Red reflector strip on back
-  const reflector = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.03, 0.01), redMat);
-  reflector.position.set(0, 0.02, 0.142);
-  
-  // Black locking clasp
-  const latch = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.02), blackMat);
-  latch.position.set(0, -0.04, 0.142);
-  helmetBox.add(reflector, latch);
-
-  scooter.add(helmetBox);
-
-  // Enable shadow casting & receiving for all meshes inside the group
-  scooter.traverse(child => {
-    if (child.isMesh) {
-      child.castShadow = true;
-      child.receiveShadow = true;
-    }
-  });
-
-  return scooter;
-}
-
-// --- Procedural Scene Builder ---
 function buildScene() {
   buildingGroup = new THREE.Group();
 
@@ -1857,19 +1232,7 @@ function buildScene() {
 
 
 
-  // Add the metallic grey Honda 350 cc scooter parked on the right side of the walkway, next to the window
-  scooterMesh = createScooter();
-  // Aligned all the way to the right of the window (centered at X = 4.3, Z = 7.2)
-  // Front of scooter is facing the window (which is in the -Z direction)
-  // Walkway top is at Y = 0.025. Scooter wheels rest on walkway.
-  scooterMesh.position.set(4.3, 0.025, 7.2);
-  // Scale it up for a larger 350cc presence (increased to 1.7)
-  scooterMesh.scale.set(1.7, 1.7, 1.7);
-  // Park it at a slight realistic angle (facing window, tilted on kickstand)
-  scooterMesh.rotation.y = 0.18; 
-  scooterMesh.rotation.z = -0.06; 
-  scooterMesh.visible = state.motorbikeEnabled;
-  scene.add(scooterMesh);
+
 
   // Add building to the scene
   scene.add(buildingGroup);
@@ -2298,17 +1661,7 @@ function setupEventListeners() {
     });
   }
 
-  // 7D. Toggle Interactive Motorbike
-  const toggleMotorbike = document.getElementById('toggle-motorbike');
-  if (toggleMotorbike) {
-    toggleMotorbike.addEventListener('change', (e) => {
-      const enabled = e.target.checked;
-      state.motorbikeEnabled = enabled;
-      if (scooterMesh) {
-        scooterMesh.visible = enabled;
-      }
-    });
-  }
+
 
   // 8. Toggle Control Panel (Close/Open) with Touch Support & Event Isolation
   const btnClosePanel = document.getElementById('btn-close-panel');
@@ -2443,15 +1796,7 @@ function applyPreset(presetName) {
   }
   clearBunnyParticles();
 
-  // Preset themes deactivate motorbike by default
-  state.motorbikeEnabled = false;
-  const toggleMotorbike = document.getElementById('toggle-motorbike');
-  if (toggleMotorbike) {
-    toggleMotorbike.checked = false;
-  }
-  if (scooterMesh) {
-    scooterMesh.visible = false;
-  }
+
 }
 
 // Camera movement animation helper
@@ -2760,7 +2105,6 @@ const translations = {
     labelEnableShadows: "👥 Enable Shadows",
     labelRightAwnings: "🟢 Right Side Awnings",
     labelInteractiveBunny: "🐰 Interactive Bunny",
-    labelInteractiveMotorbike: "🏍️ Motorbike",
     btnScreenshot: "Export Visualization PNG",
     interactionHelp: "🖱️ Left Click + Drag to rotate | 🖱️ Right Click + Drag to pan | 📜 Scroll to zoom",
     loadingTitle: "Generating 3D Model...",
@@ -2820,7 +2164,6 @@ const translations = {
     labelEnableShadows: "👥 Activar Sombras",
     labelRightAwnings: "🟢 Toldos del Lado Derecho",
     labelInteractiveBunny: "🐰 Conejo Interactivo",
-    labelInteractiveMotorbike: "🏍️ Moto",
     btnScreenshot: "Exportar PNG de Visualización",
     interactionHelp: "🖱️ Clic Izquierdo + Arrastrar para rotar | 🖱️ Clic Derecho + Arrastrar para desplazar | 📜 Deslizar para zoom",
     loadingTitle: "Generando Modelo 3D...",
@@ -2880,7 +2223,6 @@ const translations = {
     labelEnableShadows: "👥 Activar Ombres",
     labelRightAwnings: "🟢 Tendals del Costat Dret",
     labelInteractiveBunny: "🐰 Conill Interactiu",
-    labelInteractiveMotorbike: "🏍️ Moto",
     btnScreenshot: "Exportar PNG de Visualització",
     interactionHelp: "🖱️ Clic Esquerre + Arrossegar per rotar | 🖱️ Clic Dret + Arrossegar per desplaçar | 📜 Lliscament per zoom",
     loadingTitle: "Generant Model 3D...",
@@ -2984,8 +2326,7 @@ function saveStyle(name) {
     timeOfDay: state.timeOfDay,
     enableShadows: renderer.shadowMap.enabled,
     rightAwningsEnabled: state.rightAwningsEnabled,
-    bunnyEnabled: state.bunnyEnabled,
-    motorbikeEnabled: state.motorbikeEnabled
+    bunnyEnabled: state.bunnyEnabled
   };
   styles.push(newStyle);
   localStorage.setItem('remodel3d_saved_styles', JSON.stringify(styles));
@@ -3107,17 +2448,7 @@ function applyStyle(styleObj) {
     }
   }
 
-  // Apply motorbike toggle if present
-  if (styleObj.motorbikeEnabled !== undefined) {
-    state.motorbikeEnabled = styleObj.motorbikeEnabled;
-    const toggleMotorbike = document.getElementById('toggle-motorbike');
-    if (toggleMotorbike) {
-      toggleMotorbike.checked = styleObj.motorbikeEnabled;
-    }
-    if (scooterMesh) {
-      scooterMesh.visible = styleObj.motorbikeEnabled;
-    }
-  }
+
 
   // Remove active state from preset cards because this is a custom style
   const presetCards = document.querySelectorAll('.preset-card');
